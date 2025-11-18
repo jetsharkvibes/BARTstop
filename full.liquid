@@ -35,8 +35,8 @@
 
           <!-- Skip if destination filter exists and this destination is not in it -->
           {% if bart_destinations and bart_destinations != '' %}
-            {% assign filter_string = bart_destinations | append: ',' %}
-            {% assign search_string = line_abbr | append: ',' %}
+            {% assign filter_string = ',' | append: bart_destinations | append: ',' %}
+            {% assign search_string = ',' | append: line_abbr | append: ',' %}
             {% unless filter_string contains search_string %}
               {% continue %}
             {% endunless %}
@@ -96,8 +96,8 @@
 
           <!-- Skip if destination filter exists and this destination is not in it -->
           {% if bart_destinations and bart_destinations != '' %}
-            {% assign filter_string = bart_destinations | append: ',' %}
-            {% assign search_string = line_abbr | append: ',' %}
+            {% assign filter_string = ',' | append: bart_destinations | append: ',' %}
+            {% assign search_string = ',' | append: line_abbr | append: ',' %}
             {% unless filter_string contains search_string %}
               {% continue %}
             {% endunless %}
