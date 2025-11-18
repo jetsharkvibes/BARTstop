@@ -36,18 +36,11 @@
         {% if etd.estimate and train_count < 4 %}
           {% assign line_abbr = etd.abbreviation %}
 
-          <!-- Skip if destination filter is active and this destination is not selected -->
-          {% assign show_this_dest = false %}
+          <!-- Skip if destination filter exists and this destination is not in it -->
           {% if bart_destinations and bart_destinations != '' %}
-            {% assign dest_list = bart_destinations | split: ',' %}
-            {% for selected_dest in dest_list %}
-              {% assign trimmed_dest = selected_dest | strip %}
-              {% if trimmed_dest == line_abbr %}
-                {% assign show_this_dest = true %}
-                {% break %}
-              {% endif %}
-            {% endfor %}
-            {% unless show_this_dest %}
+            {% assign filter_string = bart_destinations | append: ',' %}
+            {% assign search_string = line_abbr | append: ',' %}
+            {% unless filter_string contains search_string %}
               {% continue %}
             {% endunless %}
           {% endif %}
@@ -101,18 +94,11 @@
         {% if etd.estimate and train_count < 4 %}
           {% assign line_abbr = etd.abbreviation %}
 
-          <!-- Skip if destination filter is active and this destination is not selected -->
-          {% assign show_this_dest = false %}
+          <!-- Skip if destination filter exists and this destination is not in it -->
           {% if bart_destinations and bart_destinations != '' %}
-            {% assign dest_list = bart_destinations | split: ',' %}
-            {% for selected_dest in dest_list %}
-              {% assign trimmed_dest = selected_dest | strip %}
-              {% if trimmed_dest == line_abbr %}
-                {% assign show_this_dest = true %}
-                {% break %}
-              {% endif %}
-            {% endfor %}
-            {% unless show_this_dest %}
+            {% assign filter_string = bart_destinations | append: ',' %}
+            {% assign search_string = line_abbr | append: ',' %}
+            {% unless filter_string contains search_string %}
               {% continue %}
             {% endunless %}
           {% endif %}
