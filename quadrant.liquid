@@ -24,7 +24,69 @@
 
   <div class="grid grid--cols-2 gap--medium">
     {% assign train_count = 0 %}
+    {% assign shown_lines = "" %}
+
     {% if station.etd %}
+      <!-- First pass: one train from each unique line -->
+      {% for etd in station.etd %}
+        {% if etd.estimate and train_count < 2 %}
+          {% assign est = etd.estimate[0] %}
+          {% assign line_abbr = etd.abbreviation %}
+          {% unless shown_lines contains line_abbr %}
+            <div class="item bg--black card">
+              <div class="content layout--col gap--small">
+                <div class="value value--small text--gray-50" style="letter-spacing: 0.4px;">
+                  {{ etd.abbreviation }}
+                </div>
+
+                <div class="value value--medium text--white time-display" style="font-size: 1.9em;">
+                  {% if est.minutes == 'Leaving' or est.minutes == '0' %}
+                    Now
+                  {% else %}
+                    {% assign arrival_seconds = est.minutes | times: 60 %}
+                    {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
+                    {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
+                    {{ arrival_time_str }}
+                  {% endif %}
+                </div>
+
+                <div class="divider divider-subtle"></div>
+
+                <div class="badge-row">
+                  {% assign direction_lower = est.direction | downcase %}
+                  {% if direction_lower contains 'north' %}
+                    <div class="label label--xsmall label--inverted">N</div>
+                    <div class="label label--xsmall label--outline">S</div>
+                  {% elsif direction_lower contains 'south' %}
+                    <div class="label label--xsmall label--outline">N</div>
+                    <div class="label label--xsmall label--inverted">S</div>
+                  {% else %}
+                    <div class="label label--xsmall label--outline">N</div>
+                    <div class="label label--xsmall label--outline">S</div>
+                  {% endif %}
+
+                  {% if est.bikeflag == "1" %}
+                    <div class="label label--xsmall label--inverted">●</div>
+                  {% else %}
+                    <div class="label label--xsmall label--outline">○</div>
+                  {% endif %}
+
+                  {% assign delay_num = est.delay | plus: 0 %}
+                  {% if delay_num > 0 %}
+                    <div class="label label--xsmall label--inverted">⏱</div>
+                  {% else %}
+                    <div class="label label--xsmall label--outline">⏱</div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% assign train_count = train_count | plus: 1 %}
+            {% assign shown_lines = shown_lines | append: line_abbr | append: "," %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+
+      <!-- Second pass: fill remaining slots with any trains -->
       {% for etd in station.etd %}
         {% if etd.estimate %}
           {% for est in etd.estimate %}
@@ -35,7 +97,6 @@
                     {{ etd.abbreviation }}
                   </div>
 
-                  <!-- Arrival time, Pacific local -->
                   <div class="value value--medium text--white time-display" style="font-size: 1.9em;">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
@@ -49,7 +110,6 @@
 
                   <div class="divider divider-subtle"></div>
 
-                  <!-- Badge Footer -->
                   <div class="badge-row">
                     {% assign direction_lower = est.direction | downcase %}
                     {% if direction_lower contains 'north' %}
@@ -64,9 +124,9 @@
                     {% endif %}
 
                     {% if est.bikeflag == "1" %}
-                      <div class="label label--xsmall label--inverted">🚲</div>
+                      <div class="label label--xsmall label--inverted">●</div>
                     {% else %}
-                      <div class="label label--xsmall label--outline">🚲</div>
+                      <div class="label label--xsmall label--outline">○</div>
                     {% endif %}
 
                     {% assign delay_num = est.delay | plus: 0 %}
@@ -84,6 +144,7 @@
         {% endif %}
       {% endfor %}
     {% endif %}
+
     {% if train_count == 0 %}
       <div class="item bg--black card" style="grid-column: 1 / -1;">
         <div class="content layout--col gap--small">
