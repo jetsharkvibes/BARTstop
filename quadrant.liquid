@@ -32,11 +32,12 @@
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 2 %}
           {% assign line_abbr = etd.abbreviation %}
-          {% assign show_train = false %}
-          {% if bart_destinations == nil or bart_destinations == '' %}
-            {% assign show_train = true %}
-          {% elsif bart_destinations contains line_abbr %}
-            {% assign show_train = true %}
+          {% assign show_train = true %}
+          {% if bart_destinations and bart_destinations != '' %}
+            {% assign show_train = false %}
+            {% if bart_destinations contains line_abbr %}
+              {% assign show_train = true %}
+            {% endif %}
           {% endif %}
           {% if show_train %}
             {% unless shown_lines contains line_abbr %}
@@ -91,11 +92,12 @@
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 2 %}
           {% assign line_abbr = etd.abbreviation %}
-          {% assign show_train = false %}
-          {% if bart_destinations == nil or bart_destinations == '' %}
-            {% assign show_train = true %}
-          {% elsif bart_destinations contains line_abbr %}
-            {% assign show_train = true %}
+          {% assign show_train = true %}
+          {% if bart_destinations and bart_destinations != '' %}
+            {% assign show_train = false %}
+            {% if bart_destinations contains line_abbr %}
+              {% assign show_train = true %}
+            {% endif %}
           {% endif %}
           {% if show_train %}
             {% for est in etd.estimate offset:1 %}
