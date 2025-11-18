@@ -1,13 +1,14 @@
 <style>
-.card-vertical { border-radius: 12px; padding: 5px 57px; }
+.card-vertical { border-radius: 12px; padding: 2px 57px; }
 .time-display { line-height: 1.0; }
 .spacing-xxs { margin-top: 2px; }
 .gap-xxs { gap: 4px; }
 .layout-vertical { gap: 4px; margin: 0; padding: 0; }
 .header-vertical { margin: 0 0 2px 0; padding: 0; }
 .title-vertical { margin: 0; padding: 0; }
-.content-vertical { gap: 0; margin: 0; padding: 0; }
+.content-vertical { gap: 0; margin: ; padding: 0;  }
 .badge-row { display: flex; gap: 3px; flex-wrap: nowrap; }
+.badge-on { background: white; border-radius: 12px; padding: 8px; color: #000; font-weight: bold; font-size: 14px; white-space: nowrap; }
 </style>
 
 {% assign station = root.station[0] %}
@@ -19,7 +20,7 @@
   <div class="header header-vertical">
     <div class="title title--large text--black title-vertical">{{ station.name }}</div>
     {% if bart_direction and bart_direction != "" %}
-      <div class="label label--xsmall text--gray-40 spacing-xxs">
+      <div class="label label--small text--gray-40 spacing-xxs">
         Direction: {{ bart_direction | capitalize }}
       </div>
     {% endif %}
@@ -30,12 +31,22 @@
     {% assign shown_lines = "" %}
 
     {% if station.etd %}
-      <!-- First pass: one train from each unique line -->
+      <!-- First pass: show first train of each unique line -->
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 4 %}
-          {% assign est = etd.estimate[0] %}
           {% assign line_abbr = etd.abbreviation %}
+
+          <!-- Skip if destination filter exists and this destination is not in it -->
+          {% if bart_destinations and bart_destinations != '' %}
+            {% assign filter_string = ',' | append: bart_destinations | append: ',' %}
+            {% assign search_string = ',' | append: line_abbr | append: ',' %}
+            {% unless filter_string contains search_string %}
+              {% continue %}
+            {% endunless %}
+          {% endif %}
+
           {% unless shown_lines contains line_abbr %}
+            {% assign est = etd.estimate[0] %}
             <div class="item bg--black card-vertical">
               <div class="content content-vertical">
                 <div class="value value--small text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
@@ -53,29 +64,21 @@
                 </div>
 
                 <div class="badge-row spacing-xxs">
-                  {% assign direction_lower = est.direction | downcase %}
-                  {% if direction_lower contains 'north' %}
-                    <div class="label label--xsmall label--inverted">N</div>
-                    <div class="label label--xsmall label--outline">S</div>
-                  {% elsif direction_lower contains 'south' %}
-                    <div class="label label--xsmall label--outline">N</div>
-                    <div class="label label--xsmall label--inverted">S</div>
-                  {% else %}
-                    <div class="label label--xsmall label--outline">N</div>
-                    <div class="label label--xsmall label--outline">S</div>
-                  {% endif %}
+                  <div class="badge-on">PLAT {{ est.platform }}</div>
 
                   {% if est.bikeflag == "1" %}
-                    <div class="label label--xsmall label--inverted">🚲</div>
+                    <div class="badge-on">BIKE</div>
                   {% else %}
-                    <div class="label label--xsmall label--outline text--gray-40">🚲</div>
+                    <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
                   {% endif %}
 
                   {% assign delay_num = est.delay | plus: 0 %}
-                  {% if delay_num > 0 %}
-                    <div class="label label--xsmall label--inverted">⏱</div>
+                  {% if est.canceled == "1" %}
+                    <div class="badge-on">CANCEL</div>
+                  {% elsif delay_num > 0 %}
+                    <div class="badge-on">DELAY</div>
                   {% else %}
-                    <div class="label label--xsmall label--outline">⏱</div>
+                    <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
                   {% endif %}
                 </div>
               </div>
@@ -86,17 +89,28 @@
         {% endif %}
       {% endfor %}
 
-      <!-- Second pass: fill remaining slots with any trains -->
+      <!-- Second pass: fill remaining slots with any additional trains -->
       {% for etd in station.etd %}
-        {% if etd.estimate %}
-          {% for est in etd.estimate %}
+        {% if etd.estimate and train_count < 4 %}
+          {% assign line_abbr = etd.abbreviation %}
+
+          <!-- Skip if destination filter exists and this destination is not in it -->
+          {% if bart_destinations and bart_destinations != '' %}
+            {% assign filter_string = ',' | append: bart_destinations | append: ',' %}
+            {% assign search_string = ',' | append: line_abbr | append: ',' %}
+            {% unless filter_string contains search_string %}
+              {% continue %}
+            {% endunless %}
+          {% endif %}
+
+          {% for est in etd.estimate offset:1 %}
             {% if train_count < 4 %}
               <div class="item bg--black card-vertical">
                 <div class="content content-vertical">
-                  <div class="value value--medium text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
+                  <div class="value value--small text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
                     {{ etd.abbreviation }}
                   </div>
-                  <div class="value value--medium text--white time-display" style="font-size: 1.75em;">
+                  <div class="value value--small text--white time-display" style="font-size: 1.75em;">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
                     {% else %}
@@ -108,29 +122,21 @@
                   </div>
 
                   <div class="badge-row spacing-xxs">
-                    {% assign direction_lower = est.direction | downcase %}
-                    {% if direction_lower contains 'north' %}
-                      <div class="label label--xsmall label--inverted">N</div>
-                      <div class="label label--xsmall label--outline">S</div>
-                    {% elsif direction_lower contains 'south' %}
-                      <div class="label label--xsmall label--outline">N</div>
-                      <div class="label label--xsmall label--inverted">S</div>
-                    {% else %}
-                      <div class="label label--xsmall label--outline">N</div>
-                      <div class="label label--xsmall label--outline">S</div>
-                    {% endif %}
+                    <div class="badge-on">PLAT {{ est.platform }}</div>
 
                     {% if est.bikeflag == "1" %}
-                      <div class="label label--xsmall label--inverted">🚲</div>
+                      <div class="badge-on">BIKE</div>
                     {% else %}
-                      <div class="label label--xsmall label--outline text--gray-40">🚲</div>
+                      <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
                     {% endif %}
 
                     {% assign delay_num = est.delay | plus: 0 %}
-                    {% if delay_num > 0 %}
-                      <div class="label label--xsmall label--inverted">⏱</div>
+                    {% if est.canceled == "1" %}
+                      <div class="badge-on">CANCEL</div>
+                    {% elsif delay_num > 0 %}
+                      <div class="badge-on">DELAY</div>
                     {% else %}
-                      <div class="label label--xsmall label--outline">⏱</div>
+                      <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
                     {% endif %}
                   </div>
                 </div>
