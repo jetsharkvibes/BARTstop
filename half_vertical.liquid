@@ -1,66 +1,152 @@
-{% assign line_map = 'Pittsburg/Bay Point:PITT,Berryessa/North San José:BERY,Millbrae:MLBR,Richmond:RICH,Daly City:DALY,Warm Springs/South Fremont:WARM,Antioch:ANTC,Dublin/Pleasanton:DUBL,SFO International Airport:SFIA,Oakland Airport:OAKL,OAK Airport / Dublin/Pleasanton:DUBL' | split: ',' %}
+<style>
+.card-vertical { border-radius: 12px; padding: 5px 57px; }
+.time-display { line-height: 1.0; }
+.spacing-xxs { margin-top: 2px; }
+.gap-xxs { gap: 4px; }
+.layout-vertical { gap: 4px; margin: 0; padding: 0; }
+.header-vertical { margin: 0 0 2px 0; padding: 0; }
+.title-vertical { margin: 0; padding: 0; }
+.content-vertical { gap: 0; margin: 0; padding: 0; }
+.badge-row { display: flex; gap: 3px; flex-wrap: nowrap; }
+</style>
+
 {% assign station = root.station[0] %}
 {% assign pst_offset = 3600 | times: -8 %}
 {% assign now_utc = "now" | date: "%s" %}
 {% assign now_pst = now_utc | plus: pst_offset %}
 
-<div class="layout layout--col" style="gap:4px; margin:0; padding:0;">
-  <div class="header" style="margin:0 0 2px 0; padding:0;">
-    <div class="title title--large text--black" style="margin:0; padding:0;">{{ station.name }}</div>
+<div class="layout layout--col layout-vertical">
+  <div class="header header-vertical">
+    <div class="title title--large text--black title-vertical">{{ station.name }}</div>
     {% if bart_direction and bart_direction != "" %}
-      <div class="label label--xsmall text--gray-40" style="margin:2px 0 0 0; padding:0;">
+      <div class="label label--xsmall text--gray-40 spacing-xxs">
         Direction: {{ bart_direction | capitalize }}
       </div>
     {% endif %}
   </div>
 
-  <div class="layout layout--col" style="gap:4px; padding:0; margin:0;">
+  <div class="layout layout--col gap-xxs">
     {% assign train_count = 0 %}
+    {% assign shown_lines = "" %}
+
     {% if station.etd %}
+      <!-- First pass: one train from each unique line -->
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 4 %}
           {% assign est = etd.estimate[0] %}
-          <div class="item bg--black" style="border-radius:12px; padding:12px 57px; margin:0;">
-            <div class="content" style="gap:0; margin:0; padding:0;">
-              {% assign train_line = etd.destination %}
-              {% assign train_line_trim = train_line | strip | downcase %}
-              {% assign to_abbr = '' %}
-              {% for pair in line_map %}
-                {% assign parts = pair | split: ':' %}
-                {% assign map_key = parts[0] | strip | downcase %}
-                {% if train_line_trim == map_key %}
-                  {% assign to_abbr = parts[1] %}
-                {% endif %}
-              {% endfor %}
-              <div class="value value--large text--gray-70" style="letter-spacing:0.2px; font-size:1.10em; margin:0; padding:0; line-height:1;">
-                {{ etd.abbreviation | default: to_abbr | default: train_line }}
-              </div>
-              <div class="value value--xlarge text--white" style="line-height:1; font-size:1.75em; margin:0; padding:0;">
-                {% if est.minutes == 'Leaving' or est.minutes == '0' or est.minutes == '-1' %}
-                  Now
-                {% else %}
-                  {% assign arrival_seconds = est.minutes | times: 60 %}
-                  {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
-                  {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
-                  {{ arrival_time_str }}
-                {% endif %}
-              </div>
-              {% if est.direction %}
-                <div class="label label--xsmall text--gray-40" style="margin:2px 0 0 0; padding:0; line-height:1;">
-                  {{ est.direction }}
+          {% assign line_abbr = etd.abbreviation %}
+          {% unless shown_lines contains line_abbr %}
+            <div class="item bg--black card-vertical">
+              <div class="content content-vertical">
+                <div class="value value--small text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
+                  {{ etd.abbreviation }}
                 </div>
-              {% endif %}
+                <div class="value value--small text--white time-display" style="font-size: 1.75em;">
+                  {% if est.minutes == 'Leaving' or est.minutes == '0' %}
+                    Now
+                  {% else %}
+                    {% assign arrival_seconds = est.minutes | times: 60 %}
+                    {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
+                    {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
+                    {{ arrival_time_str }}
+                  {% endif %}
+                </div>
+
+                <div class="badge-row spacing-xxs">
+                  {% assign direction_lower = est.direction | downcase %}
+                  {% if direction_lower contains 'north' %}
+                    <div class="label label--xsmall label--inverted">N</div>
+                    <div class="label label--xsmall label--outline">S</div>
+                  {% elsif direction_lower contains 'south' %}
+                    <div class="label label--xsmall label--outline">N</div>
+                    <div class="label label--xsmall label--inverted">S</div>
+                  {% else %}
+                    <div class="label label--xsmall label--outline">N</div>
+                    <div class="label label--xsmall label--outline">S</div>
+                  {% endif %}
+
+                  {% if est.bikeflag == "1" %}
+                    <div class="label label--xsmall label--inverted">🚲</div>
+                  {% else %}
+                    <div class="label label--xsmall label--outline text--gray-40">🚲</div>
+                  {% endif %}
+
+                  {% assign delay_num = est.delay | plus: 0 %}
+                  {% if delay_num > 0 %}
+                    <div class="label label--xsmall label--inverted">⏱</div>
+                  {% else %}
+                    <div class="label label--xsmall label--outline">⏱</div>
+                  {% endif %}
+                </div>
+              </div>
             </div>
-          </div>
-          {% assign train_count = train_count | plus: 1 %}
+            {% assign train_count = train_count | plus: 1 %}
+            {% assign shown_lines = shown_lines | append: line_abbr | append: "," %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+
+      <!-- Second pass: fill remaining slots with any trains -->
+      {% for etd in station.etd %}
+        {% if etd.estimate %}
+          {% for est in etd.estimate %}
+            {% if train_count < 4 %}
+              <div class="item bg--black card-vertical">
+                <div class="content content-vertical">
+                  <div class="value value--medium text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
+                    {{ etd.abbreviation }}
+                  </div>
+                  <div class="value value--medium text--white time-display" style="font-size: 1.75em;">
+                    {% if est.minutes == 'Leaving' or est.minutes == '0' %}
+                      Now
+                    {% else %}
+                      {% assign arrival_seconds = est.minutes | times: 60 %}
+                      {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
+                      {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
+                      {{ arrival_time_str }}
+                    {% endif %}
+                  </div>
+
+                  <div class="badge-row spacing-xxs">
+                    {% assign direction_lower = est.direction | downcase %}
+                    {% if direction_lower contains 'north' %}
+                      <div class="label label--xsmall label--inverted">N</div>
+                      <div class="label label--xsmall label--outline">S</div>
+                    {% elsif direction_lower contains 'south' %}
+                      <div class="label label--xsmall label--outline">N</div>
+                      <div class="label label--xsmall label--inverted">S</div>
+                    {% else %}
+                      <div class="label label--xsmall label--outline">N</div>
+                      <div class="label label--xsmall label--outline">S</div>
+                    {% endif %}
+
+                    {% if est.bikeflag == "1" %}
+                      <div class="label label--xsmall label--inverted">🚲</div>
+                    {% else %}
+                      <div class="label label--xsmall label--outline text--gray-40">🚲</div>
+                    {% endif %}
+
+                    {% assign delay_num = est.delay | plus: 0 %}
+                    {% if delay_num > 0 %}
+                      <div class="label label--xsmall label--inverted">⏱</div>
+                    {% else %}
+                      <div class="label label--xsmall label--outline">⏱</div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              {% assign train_count = train_count | plus: 1 %}
+            {% endif %}
+          {% endfor %}
         {% endif %}
       {% endfor %}
     {% endif %}
+
     {% if train_count == 0 %}
-      <div class="item bg--black" style="border-radius:12px; padding:7px; margin:0;">
-        <div class="content" style="gap:0; margin:0; padding:0;">
+      <div class="item bg--black card-vertical">
+        <div class="content content-vertical">
           <div class="value value--xlarge text--white">⚠️</div>
-          <div class="label label--small text--gray-40" style="margin:0;">No trains available</div>
+          <div class="label label--small text--gray-40">No trains available</div>
         </div>
       </div>
     {% endif %}
