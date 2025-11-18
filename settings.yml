@@ -7,12 +7,11 @@ polling_verb: get
 polling_url: "{% if bart_direction and bart_direction != '' and bart_direction != 'Any' %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&dir={{ bart_direction }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% else %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% endif %}"
 polling_headers: ''
 polling_body: ''
-id: 180254
 custom_fields:
 - keyname: bart_origin_station
   field_type: select
-  name: BART Origin Station
-  description: Where you're boarding
+  name: BART Station
+  description: Select your BART station to view real-time arrivals
   required: true
   options:
   - 12TH
@@ -75,5 +74,5 @@ custom_fields:
   - ''
   - "n"
   - s
-name: FRVL Trmnl
+name: BARTstop
 refresh_interval: 30
