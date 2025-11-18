@@ -35,15 +35,15 @@
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 4 %}
           {% assign line_abbr = etd.abbreviation %}
-          {% assign show_train = true %}
+
+          <!-- Skip if destination filter is active and this destination is not selected -->
           {% if bart_destinations and bart_destinations != '' %}
-            {% assign show_train = false %}
-            {% if bart_destinations contains line_abbr %}
-              {% assign show_train = true %}
-            {% endif %}
+            {% unless bart_destinations contains line_abbr %}
+              {% continue %}
+            {% endunless %}
           {% endif %}
-          {% if show_train %}
-            {% unless shown_lines contains line_abbr %}
+
+          {% unless shown_lines contains line_abbr %}
             {% assign est = etd.estimate[0] %}
             <div class="item bg--black card-vertical">
               <div class="content content-vertical">
@@ -81,10 +81,9 @@
                 </div>
               </div>
             </div>
-              {% assign train_count = train_count | plus: 1 %}
-              {% assign shown_lines = shown_lines | append: line_abbr | append: "," %}
-            {% endunless %}
-          {% endif %}
+            {% assign train_count = train_count | plus: 1 %}
+            {% assign shown_lines = shown_lines | append: line_abbr | append: "," %}
+          {% endunless %}
         {% endif %}
       {% endfor %}
 
@@ -92,16 +91,16 @@
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 4 %}
           {% assign line_abbr = etd.abbreviation %}
-          {% assign show_train = true %}
+
+          <!-- Skip if destination filter is active and this destination is not selected -->
           {% if bart_destinations and bart_destinations != '' %}
-            {% assign show_train = false %}
-            {% if bart_destinations contains line_abbr %}
-              {% assign show_train = true %}
-            {% endif %}
+            {% unless bart_destinations contains line_abbr %}
+              {% continue %}
+            {% endunless %}
           {% endif %}
-          {% if show_train %}
-            {% for est in etd.estimate offset:1 %}
-              {% if train_count < 4 %}
+
+          {% for est in etd.estimate offset:1 %}
+            {% if train_count < 4 %}
               <div class="item bg--black card-vertical">
                 <div class="content content-vertical">
                   <div class="value value--small text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
@@ -138,10 +137,9 @@
                   </div>
                 </div>
               </div>
-                {% assign train_count = train_count | plus: 1 %}
-              {% endif %}
-            {% endfor %}
-          {% endif %}
+              {% assign train_count = train_count | plus: 1 %}
+            {% endif %}
+          {% endfor %}
         {% endif %}
       {% endfor %}
     {% endif %}
