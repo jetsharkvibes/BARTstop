@@ -1,5 +1,5 @@
 <style>
-.card-vertical { border-radius: 12px; padding: 12px 57px; }
+.card-vertical { border-radius: 12px; padding: 5px 57px; }
 .time-display { line-height: 1.0; }
 .spacing-xxs { margin-top: 2px; }
 .gap-xxs { gap: 4px; }
@@ -38,10 +38,10 @@
           {% unless shown_lines contains line_abbr %}
             <div class="item bg--black card-vertical">
               <div class="content content-vertical">
-                <div class="value value--large text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
+                <div class="value value--small text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
                   {{ etd.abbreviation }}
                 </div>
-                <div class="value value--xlarge text--white time-display" style="font-size: 1.75em;">
+                <div class="value value--small text--white time-display" style="font-size: 1.75em;">
                   {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                     Now
                   {% else %}
@@ -93,10 +93,10 @@
             {% if train_count < 4 %}
               <div class="item bg--black card-vertical">
                 <div class="content content-vertical">
-                  <div class="value value--large text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
+                  <div class="value value--medium text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
                     {{ etd.abbreviation }}
                   </div>
-                  <div class="value value--xlarge text--white time-display" style="font-size: 1.75em;">
+                  <div class="value value--medium text--white time-display" style="font-size: 1.75em;">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
                     {% else %}

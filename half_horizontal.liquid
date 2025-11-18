@@ -12,7 +12,7 @@
 {% assign now_utc = "now" | date: "%s" %}
 {% assign now_pst = now_utc | plus: pst_offset %}
 
-<div class="layout layout--col gap--large">
+<div class="layout layout--col gap--small">
   <div class="header">
     <div class="title title--large text--black">{{ station.name }}</div>
     {% if bart_direction and bart_direction != "" %}
@@ -35,7 +35,7 @@
           {% unless shown_lines contains line_abbr %}
             <div class="item bg--black card-compact">
               <div class="content layout--col gap--small">
-                <div class="value value--small text--gray-50" style="letter-spacing: 0.3px; font-size: 0.85em;">
+                <div class="value value--small text--gray-50" style="letter-spacing: 0.3px; font-size: 2em;">
                   {{ etd.abbreviation }}
                 </div>
 
