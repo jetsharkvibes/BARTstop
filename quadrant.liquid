@@ -32,7 +32,14 @@
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 2 %}
           {% assign line_abbr = etd.abbreviation %}
-          {% unless shown_lines contains line_abbr %}
+          {% assign show_train = false %}
+          {% if bart_destinations == nil or bart_destinations == '' %}
+            {% assign show_train = true %}
+          {% elsif bart_destinations contains line_abbr %}
+            {% assign show_train = true %}
+          {% endif %}
+          {% if show_train %}
+            {% unless shown_lines contains line_abbr %}
             {% assign est = etd.estimate[0] %}
             <div class="item bg--black card">
               <div class="content layout--col gap--small">
@@ -73,17 +80,26 @@
                 </div>
               </div>
             </div>
-            {% assign train_count = train_count | plus: 1 %}
-            {% assign shown_lines = shown_lines | append: line_abbr | append: "," %}
-          {% endunless %}
+              {% assign train_count = train_count | plus: 1 %}
+              {% assign shown_lines = shown_lines | append: line_abbr | append: "," %}
+            {% endunless %}
+          {% endif %}
         {% endif %}
       {% endfor %}
 
       <!-- Second pass: fill remaining slots with any additional trains -->
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 2 %}
-          {% for est in etd.estimate offset:1 %}
-            {% if train_count < 2 %}
+          {% assign line_abbr = etd.abbreviation %}
+          {% assign show_train = false %}
+          {% if bart_destinations == nil or bart_destinations == '' %}
+            {% assign show_train = true %}
+          {% elsif bart_destinations contains line_abbr %}
+            {% assign show_train = true %}
+          {% endif %}
+          {% if show_train %}
+            {% for est in etd.estimate offset:1 %}
+              {% if train_count < 2 %}
               <div class="item bg--black card">
                 <div class="content layout--col gap--small">
                   <div class="value value--small text--gray-50" style="letter-spacing: 0.4px;">
@@ -123,9 +139,10 @@
                   </div>
                 </div>
               </div>
-              {% assign train_count = train_count | plus: 1 %}
-            {% endif %}
-          {% endfor %}
+                {% assign train_count = train_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
         {% endif %}
       {% endfor %}
     {% endif %}

@@ -75,5 +75,17 @@ custom_fields:
   - ''
   - "n"
   - s
+- keyname: bart_destinations
+  field_type: multiselect
+  name: Destinations
+  description: Select which destinations to show (defaults to all)
+  required: false
+  options:
+  - RICH
+  - DUBL
+  - BERY
+  - MLBR
+  - ANTC
+  - DALY
 name: FRVL Trmnl
 refresh_interval: 30
