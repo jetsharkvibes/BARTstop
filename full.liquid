@@ -4,6 +4,8 @@
 .divider-subtle { border-color: rgba(255,255,255,0.06); }
 .divider-footer { border-color: rgba(255,255,255,0.09); }
 .spacing-xs { margin-top: 4px; }
+.badge-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.badge-inactive { opacity: 0.3; }
 </style>
 
 {% assign station = root.station[0] %}
@@ -48,15 +50,33 @@
 
                   <div class="divider divider-subtle"></div>
 
-                  {% if est.platform %}
-                    <div class="label label--xsmall text--gray-40">Platform {{ est.platform }}</div>
-                  {% endif %}
-                  {% if est.direction %}
-                    <div class="label label--xsmall text--gray-40">{{ est.direction }}</div>
-                  {% endif %}
-                  {% if est.bikeflag == "1" %}
-                    <div class="label label--xsmall text--gray-50 spacing-xs">Bikes allowed</div>
-                  {% endif %}
+                  <!-- Badge Footer -->
+                  <div class="badge-row">
+                    {% assign direction_lower = est.direction | downcase %}
+                    {% if direction_lower contains 'north' %}
+                      <div class="label label--xsmall bg--white text--black">NORTH</div>
+                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">SOUTH</div>
+                    {% elsif direction_lower contains 'south' %}
+                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">NORTH</div>
+                      <div class="label label--xsmall bg--white text--black">SOUTH</div>
+                    {% else %}
+                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">NORTH</div>
+                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">SOUTH</div>
+                    {% endif %}
+
+                    {% if est.bikeflag == "1" %}
+                      <div class="label label--xsmall bg--white text--black">BIKE</div>
+                    {% else %}
+                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">BIKE</div>
+                    {% endif %}
+
+                    {% assign delay_num = est.delay | plus: 0 %}
+                    {% if delay_num > 0 %}
+                      <div class="label label--xsmall bg--white text--black">DELAY</div>
+                    {% else %}
+                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">DELAY</div>
+                    {% endif %}
+                  </div>
                 </div>
               </div>
               {% assign train_count = train_count | plus: 1 %}
