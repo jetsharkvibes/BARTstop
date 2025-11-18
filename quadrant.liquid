@@ -4,8 +4,7 @@
 .divider-subtle { border-color: rgba(255,255,255,0.06); }
 .spacing-xs { margin-top: 4px; }
 .container-quadrant { flex: 1; min-width: 0; width: 100%; }
-.badge-row { display: flex; gap: 4px; flex-wrap: wrap; }
-.badge-inactive { opacity: 0.3; }
+.badge-row { display: flex; gap: 3px; flex-wrap: nowrap; }
 </style>
 
 {% assign station = root.station[0] %}
@@ -54,27 +53,27 @@
                   <div class="badge-row">
                     {% assign direction_lower = est.direction | downcase %}
                     {% if direction_lower contains 'north' %}
-                      <div class="label label--xsmall bg--white text--black">NORTH</div>
-                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">SOUTH</div>
+                      <div class="label label--xsmall label--inverted">N</div>
+                      <div class="label label--xsmall label--outline">S</div>
                     {% elsif direction_lower contains 'south' %}
-                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">NORTH</div>
-                      <div class="label label--xsmall bg--white text--black">SOUTH</div>
+                      <div class="label label--xsmall label--outline">N</div>
+                      <div class="label label--xsmall label--inverted">S</div>
                     {% else %}
-                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">NORTH</div>
-                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">SOUTH</div>
+                      <div class="label label--xsmall label--outline">N</div>
+                      <div class="label label--xsmall label--outline">S</div>
                     {% endif %}
 
                     {% if est.bikeflag == "1" %}
-                      <div class="label label--xsmall bg--white text--black">BIKE</div>
+                      <div class="label label--xsmall label--inverted">🚲</div>
                     {% else %}
-                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">BIKE</div>
+                      <div class="label label--xsmall label--outline">🚲</div>
                     {% endif %}
 
                     {% assign delay_num = est.delay | plus: 0 %}
                     {% if delay_num > 0 %}
-                      <div class="label label--xsmall bg--white text--black">DELAY</div>
+                      <div class="label label--xsmall label--inverted">⏱</div>
                     {% else %}
-                      <div class="label label--xsmall label--outline text--gray-40 badge-inactive">DELAY</div>
+                      <div class="label label--xsmall label--outline">⏱</div>
                     {% endif %}
                   </div>
                 </div>
