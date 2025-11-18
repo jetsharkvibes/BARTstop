@@ -16,53 +16,77 @@
 
   <div class="grid grid--cols-3 gap--medium">
     {% assign train_count = 0 %}
+    {% assign seen_trains = '' %}
     {% if station.etd %}
       {% for etd in station.etd %}
-        {% if etd.estimate and train_count < 3 %}
-          {% assign est = etd.estimate[0] %}
-          <div class="item bg--black" style="border-radius: 12px; padding: 16px;">
-            <div class="content layout--col gap--small">
+        {% if etd.estimate %}
+          {% for est in etd.estimate %}
+            {% if train_count < 3 %}
+              {% comment %} Create unique key for deduplication: destination-platform-minutes {% endcomment %}
+              {% assign train_key = etd.abbreviation | append: '-' | append: est.platform | append: '-' | append: est.minutes %}
 
-              {% assign train_line = etd.destination %}
-              {% assign train_line_trim = train_line | strip | downcase %}
-              {% assign to_abbr = '' %}
-              {% for pair in line_map %}
-                {% assign parts = pair | split: ':' %}
-                {% assign map_key = parts[0] | strip | downcase %}
-                {% if train_line_trim == map_key %}
-                  {% assign to_abbr = parts[1] %}
+              {% comment %} Only show if not already seen {% endcomment %}
+              {% unless seen_trains contains train_key %}
+                {% assign seen_trains = seen_trains | append: '|' | append: train_key | append: '|' %}
+
+                {% comment %} Correct direction based on destination {% endcomment %}
+                {% assign corrected_direction = est.direction %}
+                {% if etd.abbreviation == 'BERY' or etd.abbreviation == 'WARM' %}
+                  {% assign corrected_direction = 'South' %}
+                {% elsif etd.abbreviation == 'RICH' or etd.abbreviation == 'ANTC' or etd.abbreviation == 'PITT' %}
+                  {% assign corrected_direction = 'North' %}
+                {% elsif etd.abbreviation == 'DALY' or etd.abbreviation == 'MLBR' or etd.abbreviation == 'SFIA' %}
+                  {% assign corrected_direction = 'North' %}
+                {% elsif etd.abbreviation == 'DUBL' %}
+                  {% assign corrected_direction = 'North' %}
                 {% endif %}
-              {% endfor %}
-              <div class="value value--large text--gray-60" style="letter-spacing: 0.4px;">
-                {{ etd.abbreviation | default: to_abbr | default: train_line }}
-              </div>
 
-              <!-- Arrival time, Pacific local -->
-              <div class="value value--xlarge text--white" style="line-height: 1.0; font-size: 2.6em;">
-                {% if est.minutes == 'Leaving' or est.minutes == '0' or est.minutes == '-1' %}
-                  Now
-                {% else %}
-                  {% assign arrival_seconds = est.minutes | times: 60 %}
-                  {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
-                  {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
-                  {{ arrival_time_str }}
-                {% endif %}
-              </div>
+                <div class="item bg--black" style="border-radius: 12px; padding: 16px;">
+                  <div class="content layout--col gap--small">
 
-              <div class="divider" style="border-color: rgba(255,255,255,0.06);"></div>
+                    {% assign train_line = etd.destination %}
+                    {% assign train_line_trim = train_line | strip | downcase %}
+                    {% assign to_abbr = '' %}
+                    {% for pair in line_map %}
+                      {% assign parts = pair | split: ':' %}
+                      {% assign map_key = parts[0] | strip | downcase %}
+                      {% if train_line_trim == map_key %}
+                        {% assign to_abbr = parts[1] %}
+                      {% endif %}
+                    {% endfor %}
+                    <div class="value value--large text--gray-60" style="letter-spacing: 0.4px;">
+                      {{ etd.abbreviation | default: to_abbr | default: train_line }}
+                    </div>
 
-              {% if est.platform %}
-                <div class="label label--xsmall text--gray-40">Platform {{ est.platform }}</div>
-              {% endif %}
-              {% if est.direction %}
-                <div class="label label--xsmall text--gray-40">{{ est.direction }}</div>
-              {% endif %}
-              {% if est.bikeflag == "1" %}
-                <div class="label label--xsmall text--gray-50" style="margin-top: 4px;">Bikes allowed</div>
-              {% endif %}
-            </div>
-          </div>
-          {% assign train_count = train_count | plus: 1 %}
+                    <!-- Arrival time, Pacific local -->
+                    <div class="value value--xlarge text--white" style="line-height: 1.0; font-size: 2.6em;">
+                      {% if est.minutes == 'Leaving' or est.minutes == '0' or est.minutes == '-1' %}
+                        Now
+                      {% else %}
+                        {% assign arrival_seconds = est.minutes | times: 60 %}
+                        {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
+                        {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
+                        {{ arrival_time_str }}
+                      {% endif %}
+                    </div>
+
+                    <div class="divider" style="border-color: rgba(255,255,255,0.06);"></div>
+
+                    {% if est.platform %}
+                      <div class="label label--xsmall text--gray-40">Platform {{ est.platform }}</div>
+                    {% endif %}
+                    {% if corrected_direction %}
+                      <div class="label label--xsmall text--gray-40">{{ corrected_direction }}</div>
+                    {% endif %}
+                    {% if est.bikeflag == "1" %}
+                      <div class="label label--xsmall text--gray-50" style="margin-top: 4px;">Bikes allowed</div>
+                    {% endif %}
+                  </div>
+                </div>
+                {% assign train_count = train_count | plus: 1 %}
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
         {% endif %}
       {% endfor %}
     {% endif %}
