@@ -54,19 +54,35 @@
                     <div class="divider divider-subtle"></div>
 
                     <div class="badge-row">
-                      <span class="label label--xsmall label--outline">PLAT {{ est.platform }}</span>
+                      <div class="bg--white" style="border-radius: 6px; padding: 8px 8px;">
+                        <div style="color: #000; font-weight: bold; font-size: 14px; white-space: nowrap;">
+                          PLAT {{ est.platform }}
+                        </div>
+                      </div>
 
                       {% if est.bikeflag == "1" %}
-                        <span class="label label--xsmall label--outline">BIKE</span>
+                        <div class="bg--white" style="border-radius: 6px; padding: 8px 8px;">
+                          <div style="color: #000; font-weight: bold; font-size: 14px; white-space: nowrap;">
+                            BIKE
+                          </div>
+                        </div>
                       {% else %}
                         <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
                       {% endif %}
 
                       {% assign delay_num = est.delay | plus: 0 %}
                       {% if est.canceled == "1" %}
-                        <span class="label label--xsmall label--outline">CANCEL</span>
+                        <div class="bg--white" style="border-radius: 6px; padding: 8px 8px;">
+                          <div style="color: #000; font-weight: bold; font-size: 14px; white-space: nowrap;">
+                            CANCEL
+                          </div>
+                        </div>
                       {% elsif delay_num > 0 %}
-                        <span class="label label--xsmall label--outline">DELAY</span>
+                        <div class="bg--white" style="border-radius: 6px; padding: 8px 8px;">
+                          <div style="color: #000; font-weight: bold; font-size: 14px; white-space: nowrap;">
+                            DELAY
+                          </div>
+                        </div>
                       {% else %}
                         <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
                       {% endif %}
