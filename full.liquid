@@ -1,0 +1,86 @@
+{% assign line_map = 'Pittsburg/Bay Point:PITT,Berryessa/North San José:BERY,Millbrae:MLBR,Richmond:RICH,Daly City:DALY,Warm Springs/South Fremont:WARM,Antioch:ANTC,Dublin/Pleasanton:DUBL,SFO International Airport:SFIA,Oakland Airport:OAKL,OAK Airport / Dublin/Pleasanton:DUBL' | split: ',' %}
+{% assign station = root.station[0] %}
+{% assign pst_offset = 3600 | times: -8 %}
+{% assign now_utc = "now" | date: "%s" %}
+{% assign now_pst = now_utc | plus: pst_offset %}
+
+<div class="layout layout--col gap--large">
+  <div class="header">
+    <div class="title title--large text--black">{{ station.name }}</div>
+    {% if bart_direction and bart_direction != "" %}
+      <div class="label label--xsmall text--gray-60" style="margin-top: 6px;">
+        Direction: {{ bart_direction | capitalize }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="grid grid--cols-3 gap--medium">
+    {% assign train_count = 0 %}
+    {% if station.etd %}
+      {% for etd in station.etd %}
+        {% if etd.estimate and train_count < 3 %}
+          {% assign est = etd.estimate[0] %}
+          <div class="item bg--black" style="border-radius: 12px; padding: 16px;">
+            <div class="content layout--col gap--small">
+
+              {% assign train_line = etd.destination %}
+              {% assign train_line_trim = train_line | strip | downcase %}
+              {% assign to_abbr = '' %}
+              {% for pair in line_map %}
+                {% assign parts = pair | split: ':' %}
+                {% assign map_key = parts[0] | strip | downcase %}
+                {% if train_line_trim == map_key %}
+                  {% assign to_abbr = parts[1] %}
+                {% endif %}
+              {% endfor %}
+              <div class="value value--large text--gray-60" style="letter-spacing: 0.4px;">
+                {{ etd.abbreviation | default: to_abbr | default: train_line }}
+              </div>
+
+              <!-- Arrival time, Pacific local -->
+              <div class="value value--xlarge text--white" style="line-height: 1.0; font-size: 2.6em;">
+                {% if est.minutes == 'Leaving' or est.minutes == '0' or est.minutes == '-1' %}
+                  Now
+                {% else %}
+                  {% assign arrival_seconds = est.minutes | times: 60 %}
+                  {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
+                  {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
+                  {{ arrival_time_str }}
+                {% endif %}
+              </div>
+
+              <div class="divider" style="border-color: rgba(255,255,255,0.06);"></div>
+
+              {% if est.platform %}
+                <div class="label label--xsmall text--gray-40">Platform {{ est.platform }}</div>
+              {% endif %}
+              {% if est.direction %}
+                <div class="label label--xsmall text--gray-40">{{ est.direction }}</div>
+              {% endif %}
+              {% if est.bikeflag == "1" %}
+                <div class="label label--xsmall text--gray-50" style="margin-top: 4px;">Bikes allowed</div>
+              {% endif %}
+            </div>
+          </div>
+          {% assign train_count = train_count | plus: 1 %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% if train_count == 0 %}
+      <div class="item bg--black" style="grid-column: 1 / -1;">
+        <div class="content layout--col gap--small">
+          <div class="value value--xlarge text--white">⚠️</div>
+          <div class="label label--small text--gray-40">No trains available</div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="footer">
+    <div class="divider" style="border-color: rgba(255,255,255,0.09);"></div>
+    <div class="label label--xsmall text--gray-50"></div>
+    {% if last_updated %}
+      <div class="label label--xsmall text--gray-60">Updated {{ last_updated }}</div>
+    {% endif %}
+  </div>
+</div>
