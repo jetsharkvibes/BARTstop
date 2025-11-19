@@ -16,9 +16,10 @@
 {% assign now_utc = "now" | date: "%s" %}
 {% assign now_pst = now_utc | plus: pst_offset %}
 
-{% comment %} Convert badge_visibility array to string {% endcomment %}
-{% if badge_visibility %}
-  {% assign badge_visibility_str = badge_visibility | join: "," %}
+{% comment %} Convert badge_visibility array to string - using proper TRMNL path {% endcomment %}
+{% assign badge_visibility_raw = trmnl.plugin_settings.custom_fields_values.badge_visibility %}
+{% if badge_visibility_raw %}
+  {% assign badge_visibility_str = badge_visibility_raw | join: "," %}
 {% else %}
   {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
 {% endif %}

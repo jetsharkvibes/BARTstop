@@ -9,12 +9,9 @@
 </style>
 
 <script>
-console.log('[BART] badge_visibility:', '{{ badge_visibility }}');
-console.log('[BART] badge_visibility size:', {{ badge_visibility.size }});
-console.log('[BART] badge_visibility first:', '{{ badge_visibility.first }}');
-console.log('[BART] badge_visibility[0]:', '{{ badge_visibility[0] }}');
-console.log('[BART] badge_visibility joined:', '{{ badge_visibility | join: "," }}');
-console.log('[BART] All custom field vars:', Object.keys(window));
+console.log('[BART] custom_fields_values:', '{{ trmnl.plugin_settings.custom_fields_values }}');
+console.log('[BART] badge_visibility via trmnl path:', '{{ trmnl.plugin_settings.custom_fields_values.badge_visibility }}');
+console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
 </script>
 
 {% assign station = root.station[0] %}
@@ -22,18 +19,13 @@ console.log('[BART] All custom field vars:', Object.keys(window));
 {% assign now_utc = "now" | date: "%s" %}
 {% assign now_pst = now_utc | plus: pst_offset %}
 
-{% comment %} Convert badge_visibility array to string {% endcomment %}
-{% comment %} TEMPORARY: Hardcode for testing {% endcomment %}
-{% assign badge_visibility_str = "platform" %}
-{% comment %}
-{% if badge_visibility.size > 0 %}
-  {% assign badge_visibility_str = badge_visibility | join: "," %}
-{% elsif badge_visibility %}
-  {% assign badge_visibility_str = badge_visibility | join: "," %}
+{% comment %} Convert badge_visibility array to string - using proper TRMNL path {% endcomment %}
+{% assign badge_visibility_raw = trmnl.plugin_settings.custom_fields_values.badge_visibility %}
+{% if badge_visibility_raw %}
+  {% assign badge_visibility_str = badge_visibility_raw | join: "," %}
 {% else %}
   {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
 {% endif %}
-{% endcomment %}
 
 <div class="layout layout--col gap--small">
   <div class="header">
