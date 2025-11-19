@@ -65,11 +65,11 @@
 
                 {% unless badge_visibility contains "no_badges" %}
                   <div class="badge-row">
-                    {% if badge_visibility contains "platform" %}
+                    {% if badge_visibility == blank or badge_visibility contains "platform" %}
                       <div class="badge-on">PLAT {{ est.platform }}</div>
                     {% endif %}
 
-                    {% if badge_visibility contains "bike" %}
+                    {% if badge_visibility == blank or badge_visibility contains "bike" %}
                       {% if est.bikeflag == "1" %}
                         <div class="badge-on">BIKE</div>
                       {% else %}
@@ -78,9 +78,11 @@
                     {% endif %}
 
                     {% assign delay_num = est.delay | plus: 0 %}
-                    {% if est.canceled == "1" and badge_visibility contains "cancel" %}
-                      <div class="badge-on">CANCEL</div>
-                    {% elsif badge_visibility contains "delay" %}
+                    {% if est.canceled == "1" %}
+                      {% if badge_visibility == blank or badge_visibility contains "cancel" %}
+                        <div class="badge-on">CANCEL</div>
+                      {% endif %}
+                    {% elsif badge_visibility == blank or badge_visibility contains "delay" %}
                       {% if delay_num > 0 %}
                         <div class="badge-on">DELAY</div>
                       {% else %}
@@ -134,11 +136,11 @@
 
                   {% unless badge_visibility contains "no_badges" %}
                     <div class="badge-row">
-                      {% if badge_visibility contains "platform" %}
+                      {% if badge_visibility == blank or badge_visibility contains "platform" %}
                         <div class="badge-on">PLAT {{ est.platform }}</div>
                       {% endif %}
 
-                      {% if badge_visibility contains "bike" %}
+                      {% if badge_visibility == blank or badge_visibility contains "bike" %}
                         {% if est.bikeflag == "1" %}
                           <div class="badge-on">BIKE</div>
                         {% else %}
@@ -147,9 +149,11 @@
                       {% endif %}
 
                       {% assign delay_num = est.delay | plus: 0 %}
-                      {% if est.canceled == "1" and badge_visibility contains "cancel" %}
-                        <div class="badge-on">CANCEL</div>
-                      {% elsif badge_visibility contains "delay" %}
+                      {% if est.canceled == "1" %}
+                        {% if badge_visibility == blank or badge_visibility contains "cancel" %}
+                          <div class="badge-on">CANCEL</div>
+                        {% endif %}
+                      {% elsif badge_visibility == blank or badge_visibility contains "delay" %}
                         {% if delay_num > 0 %}
                           <div class="badge-on">DELAY</div>
                         {% else %}
