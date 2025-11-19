@@ -25,8 +25,12 @@
 {% endif %}
 
 <div class="layout layout--col layout-vertical">
+  <div class="title_bar">
+    <img class="image" src="/images/plugins/trmnl--render.svg">
+    <span class="title">{{ station.name }}</span>
+  </div>
+
   <div class="header header-vertical">
-    <div class="title title--large text--black title-vertical">{{ station.name }}</div>
     {% if bart_direction and bart_direction != "" %}
       <div class="label label--small text--gray-40 spacing-xxs">
         Direction: {{ bart_direction | capitalize }}

@@ -28,6 +28,11 @@ console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
 {% endif %}
 
 <div class="layout layout--col gap--small">
+  <div class="title_bar">
+    <img class="image" src="/images/plugins/trmnl--render.svg">
+    <span class="title">{{ station.name }}</span>
+  </div>
+
   <div class="header">
     <!-- DEBUG: badge_visibility = "{{ badge_visibility }}" -->
     {% if bart_direction and bart_direction != "" %}
