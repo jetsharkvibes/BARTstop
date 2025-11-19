@@ -4,77 +4,26 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-polling_url: "{% if bart_direction and bart_direction != '' and bart_direction != 'Any' %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&dir={{ bart_direction }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% else %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% endif %}"
+polling_url: "https://api.actransit.org/transit/actrealtime/prediction?stpid={{ ac_stop_id }}&token={{ ac_api_token }}"
 polling_headers: ''
 polling_body: ''
 id: 180254
 custom_fields:
-- keyname: bart_origin_station
-  field_type: select
-  name: BART Origin Station
-  description: Where you're boarding
+- keyname: ac_stop_id
+  field_type: text
+  name: AC Transit Stop ID
+  description: Enter your AC Transit stop ID (e.g., 51234)
   required: true
-  options:
-  - 12th Street Oakland: 12TH
-  - 16th Street Mission: 16TH
-  - 19th Street Oakland: 19TH
-  - 24th Street Mission: 24TH
-  - Antioch: ANTC
-  - Ashby: ASHB
-  - Balboa Park: BALB
-  - Bay Fair: BAYF
-  - Berryessa / North San Jose: BERY
-  - Castro Valley: CAST
-  - Civic Center / UN Plaza: CIVC
-  - Coliseum: COLS
-  - Colma: COLM
-  - Concord: CONC
-  - Daly City: DALY
-  - Downtown Berkeley: DBRK
-  - Dublin / Pleasanton: DUBL
-  - El Cerrito del Norte: DELN
-  - El Cerrito Plaza: PLZA
-  - Embarcadero: EMBR
-  - Fremont: FRMT
-  - Fruitvale: FTVL
-  - Glen Park: GLEN
-  - Hayward: HAYW
-  - Lafayette: LAFY
-  - Lake Merritt: LAKE
-  - MacArthur: MCAR
-  - Millbrae: MLBR
-  - Milpitas: MLPT
-  - Montgomery St.: MONT
-  - North Berkeley: NBRK
-  - North Concord / Martinez: NCON
-  - Oakland International Airport: OAKL
-  - Orinda: ORIN
-  - Pittsburg / Bay Point: PITT
-  - Pittsburg Center: PCTR
-  - Pleasant Hill / Contra Costa Centre: PHIL
-  - Powell St.: POWL
-  - Richmond: RICH
-  - Rockridge: ROCK
-  - San Bruno: SBRN
-  - San Francisco International Airport: SFIA
-  - San Leandro: SANL
-  - South Hayward: SHAY
-  - South San Francisco: SSAN
-  - Union City: UCTY
-  - Walnut Creek: WCRK
-  - Warm Springs / South Fremont: WARM
-  - West Dublin / Pleasanton: WDUB
-  - West Oakland: WOAK
-- keyname: bart_direction
-  field_type: select
-  name: Direction
-  label: Direction (Optional)
-  description: Filter trains by direction (leave blank for all directions)
+- keyname: ac_api_token
+  field_type: text
+  name: AC Transit API Token
+  description: Your API token from https://api.actransit.org
+  required: true
+- keyname: route_filter
+  field_type: text
+  name: Route Filter (Optional)
+  description: Comma-separated route numbers to filter (e.g., "6,51,800"). Leave blank for all routes.
   required: false
-  options:
-  - ''
-  - "n"
-  - s
   default: ''
 - keyname: badge_visibility
   field_type: select
@@ -82,11 +31,9 @@ custom_fields:
   multiple: true
   required: false
   options:
-  - platform
-  - bike
   - delay
-  - cancel
+  - wheelchair
   - no_badges
-  default: platform,bike,delay,cancel
-name: FRVL Trmnl
+  default: delay,wheelchair
+name: ACstop
 refresh_interval: 60

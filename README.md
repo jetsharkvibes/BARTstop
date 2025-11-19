@@ -1,16 +1,16 @@
-# BARTstop - TRMNL Plugin
+# ACstop - TRMNL Plugin
 
-A TRMNL e-ink display plugin that shows real-time train arrivals at any BART (Bay Area Rapid Transit) station.
+A TRMNL e-ink display plugin that shows real-time bus arrivals at any AC Transit stop.
 
-![BART Logo](https://www.bart.gov/sites/all/themes/bart_desktop/img/header/logo.png)
+![AC Transit Logo](https://www.actransit.org/sites/default/files/actransit-logo.svg)
 
 ## Features
 
-- **Real-time arrivals** for any BART station
-- **Train line indicators** showing destination abbreviations (RICH, MLBR, DUBL, etc.)
-- **Direction filtering** (optional) to show only northbound or southbound trains
+- **Real-time arrivals** for any AC Transit bus stop
+- **Route indicators** showing bus line numbers and destinations
+- **Multiple routes** displayed with arrival times
 - **Multiple layout options** for different TRMNL screen sizes
-- **Zero infrastructure** - no backend server required, calls BART API directly
+- **Zero infrastructure** - no backend server required, calls AC Transit API directly
 - **Store-ready** - optimized with 6 or fewer inline styles per template
 
 ## Layouts
@@ -18,22 +18,22 @@ A TRMNL e-ink display plugin that shows real-time train arrivals at any BART (Ba
 Choose from 4 responsive layouts:
 
 ### Full (3-column grid)
-Best for: Full-screen displays showing 3 upcoming trains
+Best for: Full-screen displays showing 6 upcoming buses
 - Large time display (2.6em)
-- Detailed train info including platform and bike availability
+- Detailed bus info including route and destination
 
 ### Half Horizontal (4-column grid)
-Best for: Horizontal half-screen displays showing 4 upcoming trains
+Best for: Horizontal half-screen displays showing 4 upcoming buses
 - Compact design with abbreviated labels
 - Efficient use of horizontal space
 
 ### Half Vertical (Vertical stack)
-Best for: Vertical half-screen displays showing 4 upcoming trains
+Best for: Vertical half-screen displays showing 4 upcoming buses
 - Tight vertical spacing
 - Optimized for tall, narrow displays
 
 ### Quadrant (2-column grid)
-Best for: Quarter-screen displays showing 2 upcoming trains
+Best for: Quarter-screen displays showing 2 upcoming buses
 - Medium time display (1.9em)
 - Balanced information density
 
@@ -43,51 +43,37 @@ Best for: Quarter-screen displays showing 2 upcoming trains
 
 1. Go to your TRMNL dashboard
 2. Click "Add Plugin"
-3. Paste the GitHub repository URL: `https://github.com/jetsharkvibes/BARTstop`
+3. Paste the GitHub repository URL: `https://github.com/jetsharkvibes/ACstop`
 4. Select your preferred layout template
 5. Configure your settings (see below)
 
 ### 2. Configuration
 
-**BART Station** (required)
-- Select your station from the dropdown (all 50+ BART stations supported)
-- Uses official BART station codes (12TH, EMBR, MONT, etc.)
+**AC Transit Stop ID** (required)
+- Enter your AC Transit stop ID (e.g., 51234, 52345)
+- Find your stop ID at https://api.actransit.org/transit/stops/ or use the AC Transit website
 
-**Direction** (optional)
-- Leave blank for all trains
-- Select `n` for northbound trains only
-- Select `s` for southbound trains only
+**AC Transit API Token** (required)
+- Register for a free API token at https://api.actransit.org
+- Paste your token in the configuration field
+
+**Route Filter** (optional)
+- Leave blank for all routes at this stop
+- Enter specific route numbers to filter (e.g., "6,51,800")
 
 ### 3. Refresh Interval
 
-Default: 30 seconds (recommended)
-- BART API updates every 20-30 seconds
+Default: 60 seconds (recommended)
+- AC Transit API updates in real-time
 - Faster refresh = more current data, but more API calls
-
-## Train Line Abbreviations
-
-The plugin shows abbreviated train destinations:
-
-| Abbreviation | Destination |
-|--------------|-------------|
-| RICH | Richmond |
-| MLBR | Millbrae |
-| DUBL | Dublin/Pleasanton |
-| BERY | Berryessa/North San José |
-| DALY | Daly City |
-| WARM | Warm Springs/South Fremont |
-| ANTC | Antioch |
-| PITT | Pittsburg/Bay Point |
-| SFIA | SFO International Airport |
-| OAKL | Oakland Airport |
 
 ## Technical Details
 
 ### API Integration
-- **Endpoint**: BART Real-Time ETD (Estimated Time of Departure) API
+- **Endpoint**: AC Transit Real-Time Predictions API
 - **Format**: JSON
-- **Authentication**: Public API key (MW9S-E7SL-26DU-VV8V)
-- **Rate limiting**: Respectful polling every 30 seconds
+- **Authentication**: User-provided API token (register at https://api.actransit.org)
+- **Rate limiting**: Respectful polling every 60 seconds
 
 ### Code Quality
 - **Inline styles**: 2-3 per template (well under TRMNL's 6-style limit)
@@ -96,16 +82,16 @@ The plugin shows abbreviated train destinations:
 - **Responsive**: Adapts to 1-bit through 4-bit e-ink displays
 
 ### Data Processing
-- Converts PST/PDT timezone automatically
-- Handles "Leaving" and "Now" states for imminent departures
-- Shows platform numbers and direction when available
-- Indicates bike-friendly trains (full layout only)
+- Converts Pacific timezone automatically
+- Shows arrival times in local time format
+- Displays route numbers and destination information
+- Filters by specific routes when configured
 
 ## Error Handling
 
-If no trains are available:
+If no buses are available:
 - Displays ⚠️ warning emoji
-- Shows "No trains available" message
+- Shows "No buses available" message
 - Automatically recovers when service resumes
 
 ## License
@@ -115,20 +101,20 @@ Public Domain - feel free to modify and distribute
 ## Credits
 
 - Created by jetsharkvibes
-- Inspired by [BARTcom-TRMNL](https://github.com/jetsharklambo/BARTcom-TRMNL)
-- BART API provided by [Bay Area Rapid Transit](https://www.bart.gov/)
+- Forked from [BARTstop](https://github.com/jetsharkvibes/BARTstop)
+- AC Transit API provided by [Alameda-Contra Costa Transit District](https://www.actransit.org/)
 - Built for [TRMNL](https://usetrmnl.com/)
 
 ## Support
 
 For issues or feature requests, please open an issue on GitHub:
-https://github.com/jetsharkvibes/BARTstop/issues
+https://github.com/jetsharkvibes/ACstop/issues
 
 ## Version History
 
-### v1.0.0 (2025-01-18)
-- Initial release
+### v1.0.0 (2025-11-19)
+- Initial release of ACstop (forked from BARTstop)
 - 4 responsive layouts (full, half_horizontal, half_vertical, quadrant)
-- Real-time train arrivals with line indicators
-- Direction filtering support
+- Real-time bus arrivals with route indicators
+- Route filtering support
 - Store-ready optimization (≤6 inline styles per template)
