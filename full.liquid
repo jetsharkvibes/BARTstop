@@ -10,12 +10,13 @@
 
 <script>
 console.log('[BART] badge_visibility raw value:', '{{ badge_visibility }}');
-console.log('[BART] badge_visibility type:', typeof '{{ badge_visibility }}');
-console.log('[BART] badge_visibility length:', '{{ badge_visibility }}'.length);
-console.log('[BART] badge_visibility contains platform:', '{{ badge_visibility }}'.includes('platform'));
-console.log('[BART] badge_visibility contains bike:', '{{ badge_visibility }}'.includes('bike'));
-console.log('[BART] badge_visibility contains delay:', '{{ badge_visibility }}'.includes('delay'));
-console.log('[BART] badge_visibility contains cancel:', '{{ badge_visibility }}'.includes('cancel'));
+console.log('[BART] badge_visibility_str value:', '{{ badge_visibility_str }}');
+console.log('[BART] badge_visibility_str type:', typeof '{{ badge_visibility_str }}');
+console.log('[BART] badge_visibility_str length:', '{{ badge_visibility_str }}'.length);
+console.log('[BART] badge_visibility_str contains platform:', '{{ badge_visibility_str }}'.includes('platform'));
+console.log('[BART] badge_visibility_str contains bike:', '{{ badge_visibility_str }}'.includes('bike'));
+console.log('[BART] badge_visibility_str contains delay:', '{{ badge_visibility_str }}'.includes('delay'));
+console.log('[BART] badge_visibility_str contains cancel:', '{{ badge_visibility_str }}'.includes('cancel'));
 </script>
 
 {% assign station = root.station[0] %}
@@ -23,10 +24,12 @@ console.log('[BART] badge_visibility contains cancel:', '{{ badge_visibility }}'
 {% assign now_utc = "now" | date: "%s" %}
 {% assign now_pst = now_utc | plus: pst_offset %}
 
-{% comment %} Set default badge visibility if not configured {% endcomment %}
-{% unless badge_visibility %}
-  {% assign badge_visibility = "platform,bike,delay,cancel" %}
-{% endunless %}
+{% comment %} Convert badge_visibility array to string {% endcomment %}
+{% if badge_visibility %}
+  {% assign badge_visibility_str = badge_visibility | join: "," %}
+{% else %}
+  {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
+{% endif %}
 
 <div class="layout layout--col gap--small">
   <div class="header">
@@ -78,13 +81,13 @@ console.log('[BART] badge_visibility contains cancel:', '{{ badge_visibility }}'
 
                 <div class="divider divider-subtle"></div>
 
-                {% unless badge_visibility contains "no_badges" %}
+                {% unless badge_visibility_str contains "no_badges" %}
                   <div class="badge-row">
-                    {% if badge_visibility contains "platform" %}
+                    {% if badge_visibility_str contains "platform" %}
                       <div class="badge-on">PLAT {{ est.platform }}</div>
                     {% endif %}
 
-                    {% if badge_visibility contains "bike" %}
+                    {% if badge_visibility_str contains "bike" %}
                       {% if est.bikeflag == "1" %}
                         <div class="badge-on">BIKE</div>
                       {% else %}
@@ -94,10 +97,10 @@ console.log('[BART] badge_visibility contains cancel:', '{{ badge_visibility }}'
 
                     {% assign delay_num = est.delay | plus: 0 %}
                     {% if est.canceled == "1" %}
-                      {% if badge_visibility contains "cancel" %}
+                      {% if badge_visibility_str contains "cancel" %}
                         <div class="badge-on">CANCEL</div>
                       {% endif %}
-                    {% elsif badge_visibility contains "delay" %}
+                    {% elsif badge_visibility_str contains "delay" %}
                       {% if delay_num > 0 %}
                         <div class="badge-on">DELAY</div>
                       {% else %}
@@ -149,13 +152,13 @@ console.log('[BART] badge_visibility contains cancel:', '{{ badge_visibility }}'
 
                   <div class="divider divider-subtle"></div>
 
-                  {% unless badge_visibility contains "no_badges" %}
+                  {% unless badge_visibility_str contains "no_badges" %}
                     <div class="badge-row">
-                      {% if badge_visibility contains "platform" %}
+                      {% if badge_visibility_str contains "platform" %}
                         <div class="badge-on">PLAT {{ est.platform }}</div>
                       {% endif %}
 
-                      {% if badge_visibility contains "bike" %}
+                      {% if badge_visibility_str contains "bike" %}
                         {% if est.bikeflag == "1" %}
                           <div class="badge-on">BIKE</div>
                         {% else %}
@@ -165,10 +168,10 @@ console.log('[BART] badge_visibility contains cancel:', '{{ badge_visibility }}'
 
                       {% assign delay_num = est.delay | plus: 0 %}
                       {% if est.canceled == "1" %}
-                        {% if badge_visibility contains "cancel" %}
+                        {% if badge_visibility_str contains "cancel" %}
                           <div class="badge-on">CANCEL</div>
                         {% endif %}
-                      {% elsif badge_visibility contains "delay" %}
+                      {% elsif badge_visibility_str contains "delay" %}
                         {% if delay_num > 0 %}
                           <div class="badge-on">DELAY</div>
                         {% else %}
