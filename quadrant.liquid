@@ -63,17 +63,32 @@
 
                 <div class="divider divider-subtle"></div>
 
-                <div class="badge-row">
-                  <div class="badge-on">PLAT {{ est.platform }}</div>
-                  {% assign delay_num = est.delay | plus: 0 %}
-                  {% if est.canceled == "1" %}
-                    <div class="badge-on">CANCEL</div>
-                  {% elsif delay_num > 0 %}
-                    <div class="badge-on">DELAY</div>
-                  {% else %}
-                    <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
-                  {% endif %}
-                </div>
+                {% unless badge_visibility contains "no_badges" %}
+                  <div class="badge-row">
+                    {% if badge_visibility contains "platform" %}
+                      <div class="badge-on">PLAT {{ est.platform }}</div>
+                    {% endif %}
+
+                    {% if badge_visibility contains "bike" %}
+                      {% if est.bikeflag == "1" %}
+                        <div class="badge-on">BIKE</div>
+                      {% else %}
+                        <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
+                      {% endif %}
+                    {% endif %}
+
+                    {% assign delay_num = est.delay | plus: 0 %}
+                    {% if est.canceled == "1" and badge_visibility contains "cancel" %}
+                      <div class="badge-on">CANCEL</div>
+                    {% elsif badge_visibility contains "delay" %}
+                      {% if delay_num > 0 %}
+                        <div class="badge-on">DELAY</div>
+                      {% else %}
+                        <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                {% endunless %}
               </div>
             </div>
             {% assign train_count = train_count | plus: 1 %}
@@ -117,19 +132,32 @@
 
                   <div class="divider divider-subtle"></div>
 
-                  <div class="badge-row">
-                    <div class="badge-on">PLAT {{ est.platform }}</div>
+                  {% unless badge_visibility contains "no_badges" %}
+                    <div class="badge-row">
+                      {% if badge_visibility contains "platform" %}
+                        <div class="badge-on">PLAT {{ est.platform }}</div>
+                      {% endif %}
 
+                      {% if badge_visibility contains "bike" %}
+                        {% if est.bikeflag == "1" %}
+                          <div class="badge-on">BIKE</div>
+                        {% else %}
+                          <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
+                        {% endif %}
+                      {% endif %}
 
-                    {% assign delay_num = est.delay | plus: 0 %}
-                    {% if est.canceled == "1" %}
-                      <div class="badge-on">CANCEL</div>
-                    {% elsif delay_num > 0 %}
-                      <div class="badge-on">DELAY</div>
-                    {% else %}
-                      <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
-                    {% endif %}
-                  </div>
+                      {% assign delay_num = est.delay | plus: 0 %}
+                      {% if est.canceled == "1" and badge_visibility contains "cancel" %}
+                        <div class="badge-on">CANCEL</div>
+                      {% elsif badge_visibility contains "delay" %}
+                        {% if delay_num > 0 %}
+                          <div class="badge-on">DELAY</div>
+                        {% else %}
+                          <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
+                        {% endif %}
+                      {% endif %}
+                    </div>
+                  {% endunless %}
                 </div>
               </div>
               {% assign train_count = train_count | plus: 1 %}

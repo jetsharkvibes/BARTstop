@@ -76,5 +76,18 @@ custom_fields:
   - "n"
   - s
   default: ''
+- keyname: badge_visibility
+  field_type: select
+  name: Badge Visibility
+  description: "Choose which badges to display. Use ⌘+click or ctrl+click to select multiple. Select 'No badges' to hide all badges."
+  multiple: true
+  required: false
+  options:
+  - platform
+  - bike
+  - delay
+  - cancel
+  - no_badges
+  default: platform,bike,delay,cancel
 name: FRVL Trmnl
 refresh_interval: 30
