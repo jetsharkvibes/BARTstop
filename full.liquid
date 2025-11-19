@@ -8,6 +8,16 @@
 .badge-on { background: white; border-radius: 12px; padding: 10px; color: #000; font-weight: bold; font-size: 12px; white-space: nowrap; }
 </style>
 
+<script>
+console.log('[BART] badge_visibility raw value:', '{{ badge_visibility }}');
+console.log('[BART] badge_visibility type:', typeof '{{ badge_visibility }}');
+console.log('[BART] badge_visibility length:', '{{ badge_visibility }}'.length);
+console.log('[BART] badge_visibility contains platform:', '{{ badge_visibility }}'.includes('platform'));
+console.log('[BART] badge_visibility contains bike:', '{{ badge_visibility }}'.includes('bike'));
+console.log('[BART] badge_visibility contains delay:', '{{ badge_visibility }}'.includes('delay'));
+console.log('[BART] badge_visibility contains cancel:', '{{ badge_visibility }}'.includes('cancel'));
+</script>
+
 {% assign station = root.station[0] %}
 {% assign pst_offset = 3600 | times: -8 %}
 {% assign now_utc = "now" | date: "%s" %}
