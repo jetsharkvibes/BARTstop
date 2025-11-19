@@ -9,14 +9,12 @@
 </style>
 
 <script>
-console.log('[BART] badge_visibility raw value:', '{{ badge_visibility }}');
-console.log('[BART] badge_visibility_str value:', '{{ badge_visibility_str }}');
-console.log('[BART] badge_visibility_str type:', typeof '{{ badge_visibility_str }}');
-console.log('[BART] badge_visibility_str length:', '{{ badge_visibility_str }}'.length);
-console.log('[BART] badge_visibility_str contains platform:', '{{ badge_visibility_str }}'.includes('platform'));
-console.log('[BART] badge_visibility_str contains bike:', '{{ badge_visibility_str }}'.includes('bike'));
-console.log('[BART] badge_visibility_str contains delay:', '{{ badge_visibility_str }}'.includes('delay'));
-console.log('[BART] badge_visibility_str contains cancel:', '{{ badge_visibility_str }}'.includes('cancel'));
+console.log('[BART] badge_visibility:', '{{ badge_visibility }}');
+console.log('[BART] badge_visibility size:', {{ badge_visibility.size }});
+console.log('[BART] badge_visibility first:', '{{ badge_visibility.first }}');
+console.log('[BART] badge_visibility[0]:', '{{ badge_visibility[0] }}');
+console.log('[BART] badge_visibility joined:', '{{ badge_visibility | join: "," }}');
+console.log('[BART] All custom field vars:', Object.keys(window));
 </script>
 
 {% assign station = root.station[0] %}
@@ -25,7 +23,9 @@ console.log('[BART] badge_visibility_str contains cancel:', '{{ badge_visibility
 {% assign now_pst = now_utc | plus: pst_offset %}
 
 {% comment %} Convert badge_visibility array to string {% endcomment %}
-{% if badge_visibility %}
+{% if badge_visibility.size > 0 %}
+  {% assign badge_visibility_str = badge_visibility | join: "," %}
+{% elsif badge_visibility %}
   {% assign badge_visibility_str = badge_visibility | join: "," %}
 {% else %}
   {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
