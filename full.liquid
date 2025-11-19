@@ -23,6 +23,9 @@ console.log('[BART] All custom field vars:', Object.keys(window));
 {% assign now_pst = now_utc | plus: pst_offset %}
 
 {% comment %} Convert badge_visibility array to string {% endcomment %}
+{% comment %} TEMPORARY: Hardcode for testing {% endcomment %}
+{% assign badge_visibility_str = "platform" %}
+{% comment %}
 {% if badge_visibility.size > 0 %}
   {% assign badge_visibility_str = badge_visibility | join: "," %}
 {% elsif badge_visibility %}
@@ -30,6 +33,7 @@ console.log('[BART] All custom field vars:', Object.keys(window));
 {% else %}
   {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
 {% endif %}
+{% endcomment %}
 
 <div class="layout layout--col gap--small">
   <div class="header">
