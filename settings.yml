@@ -1,3 +1,14 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+polling_url: "{% if bart_direction and bart_direction != '' and bart_direction != 'Any' %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&dir={{ bart_direction }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% else %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% endif %}"
+polling_headers: ''
+polling_body: ''
+id: 180254
+custom_fields:
 - keyname: bart_origin_station
   field_type: select
   name: BART Origin Station
@@ -62,6 +73,8 @@
   required: false
   options:
   - ''
-  - n
+  - "n"
   - s
   default: ''
+name: FRVL Trmnl
+refresh_interval: 30
