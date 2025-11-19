@@ -88,6 +88,5 @@ custom_fields:
   - delay
   - cancel
   - no_badges
-  default: platform,bike,delay,cancel
 name: FRVL Trmnl
 refresh_interval: 30
