@@ -1,11 +1,43 @@
 <style>
-.card { border-radius: 12px; padding: 10px; }
-.time-display { line-height: 1.0; }
+/* Card styling */
+.card {
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* Typography */
+.time-display {
+  line-height: 1.0;
+  font-size: 1.9em;
+  font-weight: bold;
+}
+.destination-text {
+  letter-spacing: 0.3px;
+  font-weight: bold;
+}
+
+/* Spacing */
+.spacing-xs { margin-top: 4px; }
+
+/* Dividers */
 .divider-subtle { border-color: rgba(255,255,255,0.06); }
 .divider-footer { border-color: rgba(255,255,255,0.09); }
-.spacing-xs { margin-top: 4px; }
-.badge-row { display: flex; gap: 2px; flex-wrap: nowrap; }
-.badge-on { background: white; border-radius: 10px; padding: 10px 5px; color: #000; font-weight: bold; font-size: 10px; white-space: nowrap; }
+
+/* Badges */
+.badge-row {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+}
+.badge-on {
+  background: white;
+  border-radius: 10px;
+  padding: 10px 5px;
+  color: #000;
+  font-weight: bold;
+  font-size: 10px;
+  white-space: nowrap;
+}
 </style>
 
 <script>
@@ -65,11 +97,11 @@ console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
             {% assign est = etd.estimate[0] %}
             <div class="item bg--black card">
               <div class="content layout--col gap--small">
-                <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
+                <div class="value value--small text--gray-60 destination-text">
                   {{ etd.abbreviation }}
                 </div>
 
-                <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
+                <div class="value value--small text--white time-display">
                   {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                     Now
                   {% else %}
@@ -136,11 +168,11 @@ console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
             {% if train_count < 6 %}
               <div class="item bg--black card">
                 <div class="content layout--col gap--small">
-                  <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
+                  <div class="value value--small text--gray-60 destination-text">
                     {{ etd.abbreviation }}
                   </div>
 
-                  <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
+                  <div class="value value--small text--white time-display">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
                     {% else %}

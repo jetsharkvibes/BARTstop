@@ -1,11 +1,43 @@
 <style>
-.card { border-radius: 12px; padding: 10px; }
-.time-display { line-height: 1.0; }
+/* Card styling */
+.card {
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* Typography */
+.time-display {
+  line-height: 1.0;
+  font-size: 1.9em;
+  font-weight: bold;
+}
+.destination-text {
+  letter-spacing: 0.3px;
+  font-weight: bold;
+}
+
+/* Spacing */
+.spacing-xs { margin-top: 4px; }
+
+/* Dividers */
 .divider-subtle { border-color: rgba(255,255,255,0.06); }
 .divider-footer { border-color: rgba(255,255,255,0.09); }
-.spacing-xs { margin-top: 4px; }
-.badge-row { display: flex; gap: 2px; flex-wrap: nowrap; }
-.badge-on { background: white; border-radius: 10px; padding: 10px 5px; color: #000; font-weight: bold; font-size: 10px; white-space: nowrap; }
+
+/* Badges */
+.badge-row {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+}
+.badge-on {
+  background: white;
+  border-radius: 10px;
+  padding: 10px 5px;
+  color: #000;
+  font-weight: bold;
+  font-size: 10px;
+  white-space: nowrap;
+}
 </style>
 
 {% assign station = root.station[0] %}
@@ -20,10 +52,14 @@
 {% else %}
   {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
 {% endif %}
-
+<div class="title_bar">
+  <img class="image" src="/images/plugins/trmnl--render.svg">
+  <span class="title">{{ station.name }} BART</span>
+  <span class="instance">{{ trmnl.plugin_settings.custom_fields_values.bart_direction }}</span>
+</div>
 <div class="layout layout--col gap--small">
   <div class="header">
-    <div class="title title--large text--black">{{ station.name }}</div>
+
     {% if bart_direction and bart_direction != "" %}
       <div class="label label--small text--gray-60 spacing-xs">
         Direction: {{ bart_direction | capitalize }}
@@ -54,11 +90,11 @@
             {% assign est = etd.estimate[0] %}
             <div class="item bg--black card">
               <div class="content layout--col gap--small">
-                <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
+                <div class="value value--small text--gray-60 destination-text">
                   {{ etd.abbreviation }}
                 </div>
 
-                <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
+                <div class="value value--small text--white time-display">
                   {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                     Now
                   {% else %}
@@ -125,11 +161,11 @@
             {% if train_count < 4 %}
               <div class="item bg--black card">
                 <div class="content layout--col gap--small">
-                  <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
+                  <div class="value value--small text--gray-60 destination-text">
                     {{ etd.abbreviation }}
                   </div>
 
-                  <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
+                  <div class="value value--small text--white time-display">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
                     {% else %}
