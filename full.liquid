@@ -21,6 +21,14 @@
 {% else %}
   {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
 {% endif %}
+
+{% comment %} Convert bart_train_lines array to string for filtering {% endcomment %}
+{% assign bart_train_lines_raw = trmnl.plugin_settings.custom_fields_values.bart_train_lines %}
+{% if bart_train_lines_raw %}
+  {% assign bart_train_lines_str = bart_train_lines_raw | join: "," %}
+{% else %}
+  {% assign bart_train_lines_str = "" %}
+{% endif %}
 <div class="title_bar">
   <img class="image" src="/images/plugins/trmnl--render.svg">
   <span class="title">{{ station.name }} BART</span>
@@ -47,9 +55,9 @@
         {% if etd.estimate and train_count < 12 %}
           {% assign line_abbr = etd.abbreviation %}
 
-          <!-- Skip if destination filter exists and this destination is not in it -->
-          {% if bart_destinations and bart_destinations != '' %}
-            {% assign filter_string = ',' | append: bart_destinations | append: ',' %}
+          <!-- Skip if train line filter exists and this line is not in it -->
+          {% if bart_train_lines_str and bart_train_lines_str != '' %}
+            {% assign filter_string = ',' | append: bart_train_lines_str | append: ',' %}
             {% assign search_string = ',' | append: line_abbr | append: ',' %}
             {% unless filter_string contains search_string %}
               {% continue %}
@@ -124,9 +132,9 @@
         {% if etd.estimate and train_count < 12 %}
           {% assign line_abbr = etd.abbreviation %}
 
-          <!-- Skip if destination filter exists and this destination is not in it -->
-          {% if bart_destinations and bart_destinations != '' %}
-            {% assign filter_string = ',' | append: bart_destinations | append: ',' %}
+          <!-- Skip if train line filter exists and this line is not in it -->
+          {% if bart_train_lines_str and bart_train_lines_str != '' %}
+            {% assign filter_string = ',' | append: bart_train_lines_str | append: ',' %}
             {% assign search_string = ',' | append: line_abbr | append: ',' %}
             {% unless filter_string contains search_string %}
               {% continue %}

@@ -76,6 +76,24 @@ custom_fields:
   - "n"
   - s
   default: ''
+- keyname: bart_train_lines
+  field_type: select
+  name: Train Line Filter
+  label: Train Lines (Optional)
+  description: Filter to show only selected train lines (leave blank for all lines)
+  required: false
+  multiple: true
+  options:
+  - Richmond: RICH
+  - Millbrae: MLBR
+  - Dublin/Pleasanton: DUBL
+  - Berryessa/North San José: BERY
+  - Daly City: DALY
+  - Warm Springs/South Fremont: WARM
+  - Antioch: ANTC
+  - Pittsburg/Bay Point: PITT
+  - SFO International Airport: SFIA
+  - Oakland Airport: OAKL
 - keyname: badge_visibility
   field_type: select
   name: Badge Visibility
