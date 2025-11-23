@@ -73,17 +73,18 @@ custom_fields:
   required: false
   options:
   - ''
-  - "n"
-  - s
+  - North: n
+  - South: s
   default: ''
 - keyname: bart_train_lines
   field_type: select
   name: Train Line Filter
   label: Train Lines (Optional)
-  description: Filter to show only selected train lines (leave blank for all lines)
+  description: Filter to show only selected train lines (select 'No filters' for all lines)
   required: false
   multiple: true
   options:
+  - No filters: ''
   - Richmond: RICH
   - Millbrae: MLBR
   - Dublin/Pleasanton: DUBL
@@ -94,17 +95,20 @@ custom_fields:
   - Pittsburg/Bay Point: PITT
   - SFO International Airport: SFIA
   - Oakland Airport: OAKL
+  default: ''
 - keyname: badge_visibility
   field_type: select
   name: Badge Visibility
+  label: Badge Visibility (Optional)
+  description: Choose which badges to display on train cards (full and half_vertical layouts only)
   multiple: true
   required: false
   options:
-  - platform
-  - bike
-  - delay
-  - cancel
-  - no_badges
+  - No badges: no_badges
+  - Platform: platform
+  - Bike: bike
+  - Delay: delay
+  - Cancel: cancel
   default: platform,bike,delay,cancel
 name: FRVL Trmnl
 refresh_interval: 30
