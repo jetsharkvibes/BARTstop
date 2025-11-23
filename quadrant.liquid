@@ -126,7 +126,15 @@
 
   <div class="footer">
     <div class="divider divider-footer"></div>
-    <div class="label label--small text--gray-50"></div>
+    {% if bart_train_lines_str and bart_train_lines_str != '' %}
+      <div class="label label--small text--gray-50" style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+        <span>Filters:</span>
+        {% assign lines_array = bart_train_lines_str | split: ',' %}
+        {% for line in lines_array %}
+          <span class="label label--outline">{{ line }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
     {% if last_updated %}
       <div class="label label--small text--gray-60">Updated {{ last_updated }}</div>
     {% endif %}

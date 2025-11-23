@@ -2,18 +2,19 @@
 /* Card styling */
 .train-card {
   border-radius: 12px;
-  padding: 10px;
+  padding: 12px 16px;
   display: flex;
-  flex-direction: column;
-  gap: 0px;
-  height: 100%;
+  align-items: center;
+  gap: 16px;
 }
 
 /* Typography */
-.destination-header {
-  font-size: 1.5em;
+.destination-column {
+  font-size: 1.4em;
   font-weight: bold;
   letter-spacing: 0.3px;
+  min-width: 80px;
+  flex-shrink: 0;
 }
 
 /* Spacing */
@@ -25,17 +26,18 @@
 /* Time badges */
 .times-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
+  flex: 1;
 }
 .time-badge {
   background: white;
-  border-radius: 10px;
-  padding: 10px 14px;
+  border-radius: 5px;
+  padding: 8px 6px;
   color: #000;
   font-family: sans-serif;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 14px;
   white-space: nowrap;
 }
 </style>
@@ -68,7 +70,7 @@
     {% endif %}
   </div>
 
-  <div class="grid grid--cols-2 gap--small">
+  <div class="layout layout--col gap--small">
     {% assign destinations_shown = "" %}
     {% assign card_count = 0 %}
 
@@ -88,12 +90,11 @@
 
           {% unless destinations_shown contains line_abbr %}
             <div class="item bg--black train-card">
-              
-                       <div class="value value--medium text--gray-60">
+              <div class="value value--small text--gray-60">
                 {{ etd.abbreviation }}
               </div>
               <div class="times-row">
-                {% for est in etd.estimate limit:8 %}
+                {% for est in etd.estimate limit:4 %}
                   <div class="time-badge">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
@@ -115,7 +116,7 @@
     {% endif %}
 
     {% if card_count == 0 %}
-      <div class="item bg--black train-card" style="grid-column: 1 / -1;">
+      <div class="item bg--black train-card">
         <div class="content layout--col gap--small" style="width: 100%; text-align: center;">
           <div class="value value--xlarge text--white">⚠️</div>
           <div class="label label--small text--gray-40">No trains available</div>
@@ -126,7 +127,15 @@
 
   <div class="footer">
     <div class="divider divider-footer"></div>
-    <div class="label label--small text--gray-50"></div>
+    {% if bart_train_lines_str and bart_train_lines_str != '' %}
+      <div class="label label--small text--gray-50" style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+        <span>Filters:</span>
+        {% assign lines_array = bart_train_lines_str | split: ',' %}
+        {% for line in lines_array %}
+          <span class="label label--outline">{{ line }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
     {% if last_updated %}
       <div class="label label--small text--gray-60">Updated {{ last_updated }}</div>
     {% endif %}
