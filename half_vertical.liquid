@@ -1,11 +1,13 @@
 <style>
 .card { border-radius: 12px; padding: 10px; }
-.time-display { line-height: 1.0; }
+.time-display { line-height: 1.0; font-size: 1.9em; font-weight: bold; }
 .divider-subtle { border-color: rgba(255,255,255,0.06); }
 .divider-footer { border-color: rgba(255,255,255,0.09); }
 .spacing-xs { margin-top: 4px; }
 .badge-row { display: flex; gap: 2px; flex-wrap: nowrap; }
 .badge-on { background: white; border-radius: 10px; padding: 10px 5px; color: #000; font-weight: bold; font-size: 10px; white-space: nowrap; }
+.destination-label { letter-spacing: 0.3px; font-weight: bold; }
+.no-trains-wrapper { grid-column: 1 / -1; }
 </style>
 
 
@@ -66,11 +68,11 @@
             {% endif %}
             <div class="item bg--black card">
               <div class="content layout--col gap--small">
-                <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
+                <div class="value value--small text--gray-60 destination-label">
                   {{ etd.abbreviation }}
                 </div>
 
-                <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
+                <div class="value value--small text--white time-display">
                   {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                     Now
                   {% else %}
@@ -143,11 +145,11 @@
             {% if train_count < 6 %}
               <div class="item bg--black card">
                 <div class="content layout--col gap--small">
-                  <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
+                  <div class="value value--small text--gray-60 destination-label">
                     {{ etd.abbreviation }}
                   </div>
 
-                  <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
+                  <div class="value value--small text--white time-display">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
                     {% else %}
@@ -198,7 +200,7 @@
     {% endif %}
 
     {% if train_count == 0 %}
-      <div class="item bg--black card" style="grid-column: 1 / -1;">
+      <div class="item bg--black card no-trains-wrapper">
         <div class="content layout--col gap--small">
           <div class="value value--xlarge text--white">⚠️</div>
           <div class="label label--small text--gray-40">No trains available</div>
