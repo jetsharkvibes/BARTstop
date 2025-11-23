@@ -24,7 +24,7 @@
 <div class="title_bar">
   <img class="image" src="/images/plugins/trmnl--render.svg">
   <span class="title">{{ station.name }} BART</span>
-  <span class="instance">{{ trmnl.plugin_settings.custom_fields_values.bart_direction | capitalize }}</span>
+  <span class="instance">{% assign direction = trmnl.plugin_settings.custom_fields_values.bart_direction %}{% if direction == 'n' or direction == 'N' %}North{% elsif direction == 's' or direction == 'S' %}South{% else %}{{ direction | capitalize }}{% endif %}</span>
 </div>
 <div class="layout layout--col gap--small">
   <div class="header">
