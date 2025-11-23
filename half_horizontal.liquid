@@ -73,8 +73,17 @@
   <div class="layout layout--col gap--small">
     {% assign destinations_shown = "" %}
     {% assign card_count = 0 %}
+    {% assign total_available_lines = "" %}
 
     {% if station.etd %}
+      {% comment %} First, count total available unique train lines {% endcomment %}
+      {% for etd in station.etd %}
+        {% assign line_abbr = etd.abbreviation %}
+        {% unless total_available_lines contains line_abbr %}
+          {% assign total_available_lines = total_available_lines | append: line_abbr | append: "," %}
+        {% endunless %}
+      {% endfor %}
+
       {% for etd in station.etd %}
         {% if card_count < 4 %}
           {% assign line_abbr = etd.abbreviation %}
@@ -127,14 +136,19 @@
 
   <div class="footer">
     <div class="divider divider-footer"></div>
+    {% comment %} Only show filters if we're actually filtering out some trains {% endcomment %}
     {% if bart_train_lines_str and bart_train_lines_str != '' %}
-      <div class="label label--small text--gray-50" style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
-        <span>Filters:</span>
-        {% assign lines_array = bart_train_lines_str | split: ',' %}
-        {% for line in lines_array %}
-          <span class="label label--outline">{{ line }}</span>
-        {% endfor %}
-      </div>
+      {% assign total_lines_count = total_available_lines | split: ',' | size %}
+      {% assign shown_lines_count = destinations_shown | split: ',' | size %}
+      {% if shown_lines_count < total_lines_count %}
+        <div class="label label--small text--gray-50" style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+          <span>Filters:</span>
+          {% assign lines_array = bart_train_lines_str | split: ',' %}
+          {% for line in lines_array %}
+            <span class="label label--outline">{{ line }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
     {% endif %}
     {% if last_updated %}
       <div class="label label--small text--gray-60">Updated {{ last_updated }}</div>

@@ -50,8 +50,17 @@
   <div class="grid grid--cols-2 gap--small">
     {% assign train_count = 0 %}
     {% assign shown_lines = "" %}
+    {% assign total_available_lines = "" %}
 
     {% if station.etd %}
+      {% comment %} First, count total available unique train lines {% endcomment %}
+      {% for etd in station.etd %}
+        {% assign line_abbr = etd.abbreviation %}
+        {% unless total_available_lines contains line_abbr %}
+          {% assign total_available_lines = total_available_lines | append: line_abbr | append: "," %}
+        {% endunless %}
+      {% endfor %}
+
       <!-- First pass: show first train of each unique line -->
       {% for etd in station.etd %}
         {% if etd.estimate and train_count < 6 %}
@@ -219,7 +228,20 @@
 
   <div class="footer">
     <div class="divider divider-footer"></div>
-    <div class="label label--small text--gray-50"></div>
+    {% comment %} Only show filters if we're actually filtering out some trains {% endcomment %}
+    {% if bart_train_lines_str and bart_train_lines_str != '' %}
+      {% assign total_lines_count = total_available_lines | split: ',' | size %}
+      {% assign shown_lines_count = shown_lines | split: ',' | size %}
+      {% if shown_lines_count < total_lines_count %}
+        <div class="label label--small text--gray-50" style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+          <span>Filters:</span>
+          {% assign lines_array = bart_train_lines_str | split: ',' %}
+          {% for line in lines_array %}
+            <span class="label label--outline">{{ line }}</span>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
     {% if last_updated %}
       <div class="label label--small text--gray-60">Updated {{ last_updated }}</div>
     {% endif %}
