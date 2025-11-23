@@ -2,7 +2,7 @@
 
 A TRMNL e-ink display plugin that shows real-time train arrivals at any BART (Bay Area Rapid Transit) station.
 
-![BART Logo](https://www.bart.gov/sites/all/themes/bart_desktop/img/header/logo.png)
+![Full](https://github.com/jetsharkvibes/BARTstop/blob/main/BARTstop.png)
 
 ## Features
 
@@ -14,6 +14,8 @@ A TRMNL e-ink display plugin that shows real-time train arrivals at any BART (Ba
 - **Store-ready** - optimized with 6 or fewer inline styles per template
 
 ## Layouts
+
+!Vertical and Quad](https://github.com/jetsharkvibes/BARTstop/blob/main/mash_up.png)
 
 Choose from 4 responsive layouts:
 
@@ -132,3 +134,4 @@ https://github.com/jetsharkvibes/BARTstop/issues
 - Real-time train arrivals with line indicators
 - Direction filtering support
 - Store-ready optimization (≤6 inline styles per template)
+
