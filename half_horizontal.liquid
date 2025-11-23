@@ -70,7 +70,7 @@
     {% endif %}
   </div>
 
-  <div class="layout layout--col gap--small">
+  <div class="grid grid--cols-2 gap--small">
     {% assign destinations_shown = "" %}
     {% assign card_count = 0 %}
     {% assign total_available_lines = "" %}
@@ -125,7 +125,7 @@
     {% endif %}
 
     {% if card_count == 0 %}
-      <div class="item bg--black train-card">
+      <div class="item bg--black train-card" style="grid-column: 1 / -1;">
         <div class="content layout--col gap--small" style="width: 100%; text-align: center;">
           <div class="value value--xlarge text--white">⚠️</div>
           <div class="label label--small text--gray-40">No trains available</div>
