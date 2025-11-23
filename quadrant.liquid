@@ -35,6 +35,7 @@
   border-radius: 5px;
   padding: 8px 6px;
   color: #000;
+  font-family: sans-serif;
   font-weight: bold;
   font-size: 14px;
   white-space: nowrap;
@@ -70,9 +71,11 @@
 
   <div class="layout layout--col gap--small">
     {% assign destinations_shown = "" %}
+    {% assign card_count = 0 %}
 
     {% if station.etd %}
       {% for etd in station.etd %}
+        {% if card_count < 2 %}
         {% assign line_abbr = etd.abbreviation %}
 
         <!-- Skip if train line filter exists and this line is not in it -->
@@ -105,7 +108,9 @@
             </div>
           </div>
           {% assign destinations_shown = destinations_shown | append: line_abbr | append: "," %}
+          {% assign card_count = card_count | plus: 1 %}
         {% endunless %}
+        {% endif %}
       {% endfor %}
     {% endif %}
 
