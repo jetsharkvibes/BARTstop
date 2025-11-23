@@ -1,15 +1,13 @@
 <style>
-.card-vertical { border-radius: 12px; padding: 2px 57px; }
+.card { border-radius: 12px; padding: 10px; }
 .time-display { line-height: 1.0; }
-.spacing-xxs { margin-top: 2px; }
-.gap-xxs { gap: 4px; }
-.layout-vertical { gap: 4px; margin: 0; padding: 0; }
-.header-vertical { margin: 0 0 2px 0; padding: 0; }
-.title-vertical { margin: 0; padding: 0; }
-.content-vertical { gap: 0; margin: ; padding: 0;  }
-.badge-row { display: flex; gap: 3px; flex-wrap: nowrap; }
-.badge-on { background: white; border-radius: 12px; padding: 8px; color: #000; font-weight: bold; font-size: 14px; white-space: nowrap; }
+.divider-subtle { border-color: rgba(255,255,255,0.06); }
+.divider-footer { border-color: rgba(255,255,255,0.09); }
+.spacing-xs { margin-top: 4px; }
+.badge-row { display: flex; gap: 2px; flex-wrap: nowrap; }
+.badge-on { background: white; border-radius: 10px; padding: 10px 5px; color: #000; font-weight: bold; font-size: 10px; white-space: nowrap; }
 </style>
+
 
 {% assign station = root.station[0] %}
 {% assign pst_offset = 3600 | times: -8 %}
@@ -23,25 +21,30 @@
 {% else %}
   {% assign badge_visibility_str = "platform,bike,delay,cancel" %}
 {% endif %}
+<div class="title_bar">
+  <img class="image" src="/images/plugins/trmnl--render.svg">
+  <span class="title">{{ station.name }} BART</span>
+  <span class="instance">{{ trmnl.plugin_settings.custom_fields_values.bart_direction | capitalize }}</span>
+</div>
+<div class="layout layout--col gap--small">
+  <div class="header">
 
-<div class="layout layout--col layout-vertical">
-  <div class="header header-vertical">
-    <div class="title title--large text--black title-vertical">{{ station.name }}</div>
+    <!-- DEBUG: badge_visibility = "{{ badge_visibility }}" -->
     {% if bart_direction and bart_direction != "" %}
-      <div class="label label--small text--gray-40 spacing-xxs">
+      <div class="label label--small text--gray-60 spacing-xs">
         Direction: {{ bart_direction | capitalize }}
       </div>
     {% endif %}
   </div>
 
-  <div class="layout layout--col gap-xxs">
+  <div class="grid grid--cols-2 gap--small">
     {% assign train_count = 0 %}
     {% assign shown_lines = "" %}
 
     {% if station.etd %}
       <!-- First pass: show first train of each unique line -->
       {% for etd in station.etd %}
-        {% if etd.estimate and train_count < 4 %}
+        {% if etd.estimate and train_count < 6 %}
           {% assign line_abbr = etd.abbreviation %}
 
           <!-- Skip if destination filter exists and this destination is not in it -->
@@ -55,12 +58,19 @@
 
           {% unless shown_lines contains line_abbr %}
             {% assign est = etd.estimate[0] %}
-            <div class="item bg--black card-vertical">
-              <div class="content content-vertical">
-                <div class="value value--small text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
+
+            <!-- Skip trains arriving more than 60 minutes away -->
+            {% assign minutes_num = est.minutes | plus: 0 %}
+            {% if est.minutes != 'Leaving' and minutes_num > 60 %}
+              {% continue %}
+            {% endif %}
+            <div class="item bg--black card">
+              <div class="content layout--col gap--small">
+                <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
                   {{ etd.abbreviation }}
                 </div>
-                <div class="value value--small text--white time-display" style="font-size: 1.75em;">
+
+                <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
                   {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                     Now
                   {% else %}
@@ -71,8 +81,10 @@
                   {% endif %}
                 </div>
 
+                <div class="divider divider-subtle"></div>
+
                 {% unless badge_visibility_str contains "no_badges" %}
-                  <div class="badge-row spacing-xxs">
+                  <div class="badge-row">
                     {% if badge_visibility_str contains "platform" %}
                       <div class="badge-on">PLAT {{ est.platform }}</div>
                     {% endif %}
@@ -81,7 +93,7 @@
                       {% if est.bikeflag == "1" %}
                         <div class="badge-on">BIKE</div>
                       {% else %}
-                        <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
+                        <span class="label label--small label--inverted text--gray-40">BIKE</span>
                       {% endif %}
                     {% endif %}
 
@@ -94,7 +106,7 @@
                       {% if delay_num > 0 %}
                         <div class="badge-on">DELAY</div>
                       {% else %}
-                        <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
+                        <span class="label label--small label--inverted text--gray-40">DELAY</span>
                       {% endif %}
                     {% endif %}
                   </div>
@@ -109,7 +121,7 @@
 
       <!-- Second pass: fill remaining slots with any additional trains -->
       {% for etd in station.etd %}
-        {% if etd.estimate and train_count < 4 %}
+        {% if etd.estimate and train_count < 6 %}
           {% assign line_abbr = etd.abbreviation %}
 
           <!-- Skip if destination filter exists and this destination is not in it -->
@@ -122,13 +134,20 @@
           {% endif %}
 
           {% for est in etd.estimate offset:1 %}
-            {% if train_count < 4 %}
-              <div class="item bg--black card-vertical">
-                <div class="content content-vertical">
-                  <div class="value value--small text--gray-70" style="letter-spacing: 0.2px; font-size: 1.10em;">
+            <!-- Skip trains arriving more than 60 minutes away -->
+            {% assign minutes_num = est.minutes | plus: 0 %}
+            {% if est.minutes != 'Leaving' and minutes_num > 60 %}
+              {% continue %}
+            {% endif %}
+
+            {% if train_count < 6 %}
+              <div class="item bg--black card">
+                <div class="content layout--col gap--small">
+                  <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
                     {{ etd.abbreviation }}
                   </div>
-                  <div class="value value--small text--white time-display" style="font-size: 1.75em;">
+
+                  <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
                     {% else %}
@@ -139,8 +158,10 @@
                     {% endif %}
                   </div>
 
+                  <div class="divider divider-subtle"></div>
+
                   {% unless badge_visibility_str contains "no_badges" %}
-                    <div class="badge-row spacing-xxs">
+                    <div class="badge-row">
                       {% if badge_visibility_str contains "platform" %}
                         <div class="badge-on">PLAT {{ est.platform }}</div>
                       {% endif %}
@@ -149,7 +170,7 @@
                         {% if est.bikeflag == "1" %}
                           <div class="badge-on">BIKE</div>
                         {% else %}
-                          <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
+                          <span class="label label--small label--inverted text--gray-40">BIKE</span>
                         {% endif %}
                       {% endif %}
 
@@ -162,7 +183,7 @@
                         {% if delay_num > 0 %}
                           <div class="badge-on">DELAY</div>
                         {% else %}
-                          <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
+                          <span class="label label--small label--inverted text--gray-40">DELAY</span>
                         {% endif %}
                       {% endif %}
                     </div>
@@ -177,12 +198,20 @@
     {% endif %}
 
     {% if train_count == 0 %}
-      <div class="item bg--black card-vertical">
-        <div class="content content-vertical">
+      <div class="item bg--black card" style="grid-column: 1 / -1;">
+        <div class="content layout--col gap--small">
           <div class="value value--xlarge text--white">⚠️</div>
           <div class="label label--small text--gray-40">No trains available</div>
         </div>
       </div>
+    {% endif %}
+  </div>
+
+  <div class="footer">
+    <div class="divider divider-footer"></div>
+    <div class="label label--small text--gray-50"></div>
+    {% if last_updated %}
+      <div class="label label--small text--gray-60">Updated {{ last_updated }}</div>
     {% endif %}
   </div>
 </div>

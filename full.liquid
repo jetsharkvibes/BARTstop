@@ -8,11 +8,6 @@
 .badge-on { background: white; border-radius: 10px; padding: 10px 5px; color: #000; font-weight: bold; font-size: 10px; white-space: nowrap; }
 </style>
 
-<script>
-console.log('[BART] custom_fields_values:', '{{ trmnl.plugin_settings.custom_fields_values }}');
-console.log('[BART] badge_visibility via trmnl path:', '{{ trmnl.plugin_settings.custom_fields_values.badge_visibility }}');
-console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
-</script>
 
 {% assign station = root.station[0] %}
 {% assign pst_offset = 3600 | times: -8 %}
@@ -29,7 +24,7 @@ console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
 <div class="title_bar">
   <img class="image" src="/images/plugins/trmnl--render.svg">
   <span class="title">{{ station.name }} BART</span>
-  <span class="instance">{{ trmnl.plugin_settings.custom_fields_values.bart_direction }}</span>
+  <span class="instance">{{ trmnl.plugin_settings.custom_fields_values.bart_direction | capitalize }}</span>
 </div> 
 <div class="layout layout--col gap--small">
   <div class="header">
