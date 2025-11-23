@@ -15,7 +15,7 @@ A TRMNL e-ink display plugin that shows real-time train arrivals at any BART (Ba
 
 ## Layouts
 
-!Vertical and Quad](https://github.com/jetsharkvibes/BARTstop/blob/main/mash_up.png)
+![Vertical and Quad](https://github.com/jetsharkvibes/BARTstop/blob/main/mash_up.png)
 
 Choose from 4 responsive layouts:
 
@@ -134,4 +134,5 @@ https://github.com/jetsharkvibes/BARTstop/issues
 - Real-time train arrivals with line indicators
 - Direction filtering support
 - Store-ready optimization (≤6 inline styles per template)
+
 
