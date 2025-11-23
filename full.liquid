@@ -63,12 +63,6 @@ console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
 
           {% unless shown_lines contains line_abbr %}
             {% assign est = etd.estimate[0] %}
-
-            <!-- Skip trains arriving more than 60 minutes away -->
-            {% assign minutes_num = est.minutes | plus: 0 %}
-            {% if est.minutes != 'Leaving' and minutes_num > 60 %}
-              {% continue %}
-            {% endif %}
             <div class="item bg--black card">
               <div class="content layout--col gap--small">
                 <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
@@ -139,12 +133,6 @@ console.log('[BART] badge_visibility direct:', '{{ badge_visibility }}');
           {% endif %}
 
           {% for est in etd.estimate offset:1 %}
-            <!-- Skip trains arriving more than 60 minutes away -->
-            {% assign minutes_num = est.minutes | plus: 0 %}
-            {% if est.minutes != 'Leaving' and minutes_num > 60 %}
-              {% continue %}
-            {% endif %}
-
             {% if train_count < 12 %}
               <div class="item bg--black card">
                 <div class="content layout--col gap--small">

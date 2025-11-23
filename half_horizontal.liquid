@@ -1,11 +1,11 @@
 <style>
-.card-compact { border-radius: 12px; padding: 12px; }
+.card { border-radius: 12px; padding: 10px; }
 .time-display { line-height: 1.0; }
 .divider-subtle { border-color: rgba(255,255,255,0.06); }
 .divider-footer { border-color: rgba(255,255,255,0.09); }
 .spacing-xs { margin-top: 4px; }
-.badge-row { display: flex; gap: 3px; flex-wrap: nowrap; }
-.badge-on { background: white; border-radius: 12px; padding: 10px; color: #000; font-weight: bold; font-size: 12px; white-space: nowrap; }
+.badge-row { display: flex; gap: 2px; flex-wrap: nowrap; }
+.badge-on { background: white; border-radius: 10px; padding: 10px 5px; color: #000; font-weight: bold; font-size: 10px; white-space: nowrap; }
 </style>
 
 {% assign station = root.station[0] %}
@@ -25,20 +25,20 @@
   <div class="header">
     <div class="title title--large text--black">{{ station.name }}</div>
     {% if bart_direction and bart_direction != "" %}
-      <div class="label label--xsmall text--gray-40 spacing-xs">
+      <div class="label label--small text--gray-60 spacing-xs">
         Direction: {{ bart_direction | capitalize }}
       </div>
     {% endif %}
   </div>
 
-  <div class="grid grid--cols-4 gap--medium">
+  <div class="grid grid--cols-4 gap--small">
     {% assign train_count = 0 %}
     {% assign shown_lines = "" %}
 
     {% if station.etd %}
       <!-- First pass: show first train of each unique line -->
       {% for etd in station.etd %}
-        {% if etd.estimate and train_count < 4 %}
+        {% if etd.estimate and train_count < 8 %}
           {% assign line_abbr = etd.abbreviation %}
 
           <!-- Skip if destination filter exists and this destination is not in it -->
@@ -52,13 +52,13 @@
 
           {% unless shown_lines contains line_abbr %}
             {% assign est = etd.estimate[0] %}
-            <div class="item bg--black card-compact">
+            <div class="item bg--black card">
               <div class="content layout--col gap--small">
-                <div class="value value--small text--gray-50" style="letter-spacing: 0.3px; font-size: 2em;">
+                <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
                   {{ etd.abbreviation }}
                 </div>
 
-                <div class="value value--large text--white time-display" style="font-size: 1.8em;">
+                <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
                   {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                     Now
                   {% else %}
@@ -109,7 +109,7 @@
 
       <!-- Second pass: fill remaining slots with any additional trains -->
       {% for etd in station.etd %}
-        {% if etd.estimate and train_count < 4 %}
+        {% if etd.estimate and train_count < 8 %}
           {% assign line_abbr = etd.abbreviation %}
 
           <!-- Skip if destination filter exists and this destination is not in it -->
@@ -122,14 +122,14 @@
           {% endif %}
 
           {% for est in etd.estimate offset:1 %}
-            {% if train_count < 4 %}
-              <div class="item bg--black card-compact">
+            {% if train_count < 8 %}
+              <div class="item bg--black card">
                 <div class="content layout--col gap--small">
-                  <div class="value value--small text--gray-50" style="letter-spacing: 0.3px; font-size: 2em;">
+                  <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
                     {{ etd.abbreviation }}
                   </div>
 
-                  <div class="value value--large text--white time-display" style="font-size: 1.8em;">
+                  <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
                     {% if est.minutes == 'Leaving' or est.minutes == '0' %}
                       Now
                     {% else %}
@@ -152,7 +152,7 @@
                         {% if est.bikeflag == "1" %}
                           <div class="badge-on">BIKE</div>
                         {% else %}
-                          <span class="label label--xsmall label--inverted text--gray-40">BIKE</span>
+                          <span class="label label--small label--inverted text--gray-40">BIKE</span>
                         {% endif %}
                       {% endif %}
 
@@ -165,7 +165,7 @@
                         {% if delay_num > 0 %}
                           <div class="badge-on">DELAY</div>
                         {% else %}
-                          <span class="label label--xsmall label--inverted text--gray-40">DELAY</span>
+                          <span class="label label--small label--inverted text--gray-40">DELAY</span>
                         {% endif %}
                       {% endif %}
                     </div>
@@ -180,7 +180,7 @@
     {% endif %}
 
     {% if train_count == 0 %}
-      <div class="item bg--black card-compact" style="grid-column: 1 / -1;">
+      <div class="item bg--black card" style="grid-column: 1 / -1;">
         <div class="content layout--col gap--small">
           <div class="value value--xlarge text--white">⚠️</div>
           <div class="label label--small text--gray-40">No trains available</div>
@@ -191,8 +191,9 @@
 
   <div class="footer">
     <div class="divider divider-footer"></div>
+    <div class="label label--small text--gray-50"></div>
     {% if last_updated %}
-      <div class="label label--xsmall text--gray-60">Updated {{ last_updated }}</div>
+      <div class="label label--small text--gray-60">Updated {{ last_updated }}</div>
     {% endif %}
   </div>
 </div>
