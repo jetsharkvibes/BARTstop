@@ -44,17 +44,50 @@ Best for: Quarter-screen displays showing 2 trains
 - Sans-serif time display
 - Maximum 2 train cards to fit small space
 
-## Setup
+## Installation
 
-### 1. Add to TRMNL
+### Automated Installation (Recommended)
 
-1. Go to your TRMNL dashboard
-2. Click "Add Plugin"
-3. Paste the GitHub repository URL: `https://github.com/jetsharkvibes/BARTstop`
-4. Select your preferred layout template
-5. Configure your settings (see below)
+1. Visit the [TRMNL recipe page](https://usetrmnl.com/plugins) (when available in store)
+2. Click "Install" on the BARTstop plugin
+3. Select your preferred layout template
+4. Configure your station and filters (see Configuration below)
 
-### 2. Configuration
+### Manual Installation
+
+For custom setups or if not yet in the TRMNL store:
+
+1. **Log into your TRMNL dashboard**
+2. **Create a new private plugin**
+   - Navigate to Plugins → Create Private Plugin
+
+3. **Configure the polling strategy**
+   - Strategy: `polling`
+   - Method: `GET`
+
+4. **Set the polling URL**
+
+   Copy this URL structure and paste into the "Polling URL" field:
+   ```
+   {% if bart_direction and bart_direction != '' and bart_direction != 'Any' %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&dir={{ bart_direction }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% else %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% endif %}
+   ```
+
+
+5. **Add form fields from settings.yml**
+
+   Copy the `custom_fields` section from `settings.yml` (lines 11-112) to configure:
+   - BART Origin Station dropdown
+   - Direction filter (optional)
+   - Train Line Filter (optional, multi-select)
+   - Badge Visibility (optional, multi-select)
+
+6. **Select your layout template**
+   - Choose from: `full.liquid`, `half_horizontal.liquid`, `half_vertical.liquid`, or `quadrant.liquid`
+
+7. **Set refresh interval**
+   - Recommended: 30 minutes
+
+## Configuration
 
 **BART Station** (required)
 - Select your station from the dropdown (all 50+ BART stations supported)
@@ -188,5 +221,6 @@ https://github.com/jetsharkvibes/BARTstop/issues
 - Real-time train arrivals with line indicators
 - Direction filtering support
 - Store-ready optimization (≤6 inline styles per template)
+
 
 
