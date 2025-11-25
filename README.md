@@ -69,18 +69,9 @@ For custom setups or if not yet in the TRMNL store:
 
    Copy this URL structure and paste into the "Polling URL" field:
    ```
-   https://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&key=MW9S-E7SL-26DU-VV8V&json=y
+   {% if bart_direction and bart_direction != '' and bart_direction != 'Any' %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&dir={{ bart_direction }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% else %}\r\nhttps://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&key=MW9S-E7SL-26DU-VV8V&json=y\r\n{% endif %}
    ```
 
-   **What this means:**
-   - `{{ bart_origin_station }}` - Automatically replaced with your selected station code from the form
-   - `key=MW9S-E7SL-26DU-VV8V` - Public BART API key (leave as-is)
-   - Optional: Add `&dir={{ bart_direction }}` before `&key=` if you want direction filtering
-
-   **Example with direction filtering:**
-   ```
-   https://api.bart.gov/api/etd.aspx?cmd=etd&orig={{ bart_origin_station }}&dir={{ bart_direction }}&key=MW9S-E7SL-26DU-VV8V&json=y
-   ```
 
 5. **Add form fields from settings.yml**
 
@@ -94,7 +85,7 @@ For custom setups or if not yet in the TRMNL store:
    - Choose from: `full.liquid`, `half_horizontal.liquid`, `half_vertical.liquid`, or `quadrant.liquid`
 
 7. **Set refresh interval**
-   - Recommended: 30 seconds (BART API updates every 20-30 seconds)
+   - Recommended: 30 minutes
 
 ## Configuration
 
@@ -230,5 +221,6 @@ https://github.com/jetsharkvibes/BARTstop/issues
 - Real-time train arrivals with line indicators
 - Direction filtering support
 - Store-ready optimization (≤6 inline styles per template)
+
 
 
