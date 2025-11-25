@@ -115,8 +115,8 @@ For custom setups or if not yet in the TRMNL store:
 
 ### 3. Refresh Interval
 
-Default: 30 seconds (recommended)
-- BART API updates every 20-30 seconds
+Default: 30 minutes (recommended)
+- BART API updates every 15 or 30 minutes
 - Faster refresh = more current data, but more API calls
 
 ## Filtering & Display
@@ -166,7 +166,7 @@ For **full** and **half_vertical** layouts, choose which information badges to d
 - **Endpoint**: BART Real-Time ETD (Estimated Time of Departure) API
 - **Format**: JSON
 - **Authentication**: Public API key (MW9S-E7SL-26DU-VV8V)
-- **Rate limiting**: Respectful polling every 30 seconds
+- **Rate limiting**: Respectful polling every 30 minutes per view
 
 ### Code Quality
 - **Inline styles**: 2-3 per template (well under TRMNL's 6-style limit)
@@ -176,9 +176,8 @@ For **full** and **half_vertical** layouts, choose which information badges to d
 
 ### Data Processing
 - Converts PST/PDT timezone automatically
-- Handles "Leaving" and "Now" states for imminent departures
 - Shows platform numbers and direction when available
-- Indicates bike-friendly trains (full layout only)
+- Indicates bike-friendly trains (full/vertical layouts only)
 
 ## Error Handling
 
@@ -193,7 +192,7 @@ Public Domain - feel free to modify and distribute
 
 ## Credits
 
-- Created by jetsharkvibes
+- Created by jetsharklambo
 - Inspired by [BARTcom-TRMNL](https://github.com/jetsharklambo/BARTcom-TRMNL)
 - BART API provided by [Bay Area Rapid Transit](https://www.bart.gov/)
 - Built for [TRMNL](https://usetrmnl.com/)
@@ -201,7 +200,7 @@ Public Domain - feel free to modify and distribute
 ## Support
 
 For issues or feature requests, please open an issue on GitHub:
-https://github.com/jetsharkvibes/BARTstop/issues
+https://github.com/jetsharklambo/BARTstop/issues
 
 ## Version History
 
@@ -221,6 +220,7 @@ https://github.com/jetsharkvibes/BARTstop/issues
 - Real-time train arrivals with line indicators
 - Direction filtering support
 - Store-ready optimization (≤6 inline styles per template)
+
 
 
 
