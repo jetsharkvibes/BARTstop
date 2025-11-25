@@ -74,89 +74,19 @@
 
   <div class="grid grid--cols-4 gap--small">
     {% assign train_count = 0 %}
-    {% assign shown_lines = "" %}
 
     {% if station.etd %}
-      <!-- First pass: show first train of each unique line -->
-      {% for etd in station.etd %}
-        {% if etd.estimate and train_count < 12 %}
-          {% assign line_abbr = etd.abbreviation %}
-
-          <!-- Skip if train line filter exists and this line is not in it -->
-          {% if bart_train_lines_str and bart_train_lines_str != '' %}
-            {% assign filter_string = ',' | append: bart_train_lines_str | append: ',' %}
-            {% assign search_string = ',' | append: line_abbr | append: ',' %}
-            {% unless filter_string contains search_string %}
-              {% continue %}
-            {% endunless %}
-          {% endif %}
-
-          {% unless shown_lines contains line_abbr %}
-            {% assign est = etd.estimate[0] %}
-
-            <!-- Skip trains arriving more than 60 minutes away -->
-            {% assign minutes_num = est.minutes | plus: 0 %}
-            {% if est.minutes != 'Leaving' and minutes_num > 60 %}
-              {% continue %}
-            {% endif %}
-            <div class="item bg--black card">
-              <div class="content layout--col gap--small">
-                <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
-                  {{ etd.abbreviation }}
-                </div>
-
-                <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
-                  {% if est.minutes == 'Leaving' or est.minutes == '0' %}
-                    {% assign arrival_seconds = 0 %}
-                  {% else %}
-                    {% assign arrival_seconds = est.minutes | times: 60 %}
-                  {% endif %}
-                  {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
-                  {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
-                  {{ arrival_time_str }}
-                </div>
-
-                <div class="divider divider-subtle"></div>
-
-                {% unless badge_visibility_str contains "no_badges" %}
-                  <div class="badge-row">
-                    {% if badge_visibility_str contains "platform" %}
-                      <div class="badge-on">PLAT {{ est.platform }}</div>
-                    {% endif %}
-
-                    {% if badge_visibility_str contains "bike" %}
-                      {% if est.bikeflag == "1" %}
-                        <div class="badge-on">BIKE</div>
-                      {% else %}
-                        <span class="label label--small label--inverted text--gray-40">BIKE</span>
-                      {% endif %}
-                    {% endif %}
-
-                    {% assign delay_num = est.delay | plus: 0 %}
-                    {% if est.canceled == "1" %}
-                      {% if badge_visibility_str contains "cancel" %}
-                        <div class="badge-on">CANCEL</div>
-                      {% endif %}
-                    {% elsif badge_visibility_str contains "delay" %}
-                      {% if delay_num > 0 %}
-                        <div class="badge-on">DELAY</div>
-                      {% else %}
-                        <span class="label label--small label--inverted text--gray-40">DELAY</span>
-                      {% endif %}
-                    {% endif %}
-                  </div>
-                {% endunless %}
-              </div>
-            </div>
-            {% assign train_count = train_count | plus: 1 %}
-            {% assign shown_lines = shown_lines | append: line_abbr | append: "," %}
-          {% endunless %}
+      <!-- Display trains in chronological order by iterating through minute values -->
+      {% for minute in (0..60) %}
+        {% if train_count >= 12 %}
+          {% break %}
         {% endif %}
-      {% endfor %}
 
-      <!-- Second pass: fill remaining slots with any additional trains -->
-      {% for etd in station.etd %}
-        {% if etd.estimate and train_count < 12 %}
+        {% for etd in station.etd %}
+          {% if train_count >= 12 %}
+            {% break %}
+          {% endif %}
+
           {% assign line_abbr = etd.abbreviation %}
 
           <!-- Skip if train line filter exists and this line is not in it -->
@@ -168,67 +98,72 @@
             {% endunless %}
           {% endif %}
 
-          {% for est in etd.estimate offset:1 %}
-            <!-- Skip trains arriving more than 60 minutes away -->
-            {% assign minutes_num = est.minutes | plus: 0 %}
-            {% if est.minutes != 'Leaving' and minutes_num > 60 %}
-              {% continue %}
-            {% endif %}
+          {% if etd.estimate %}
+            {% for est in etd.estimate %}
+              {% if train_count >= 12 %}
+                {% break %}
+              {% endif %}
 
-            {% if train_count < 12 %}
-              <div class="item bg--black card">
-                <div class="content layout--col gap--small">
-                  <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
-                    {{ etd.abbreviation }}
-                  </div>
+              {% assign est_minutes = est.minutes | plus: 0 %}
+              {% if est.minutes == 'Leaving' %}
+                {% assign est_minutes = 0 %}
+              {% endif %}
 
-                  <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
-                    {% if est.minutes == 'Leaving' or est.minutes == '0' %}
-                      {% assign arrival_seconds = 0 %}
-                    {% else %}
-                      {% assign arrival_seconds = est.minutes | times: 60 %}
-                    {% endif %}
-                    {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
-                    {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
-                    {{ arrival_time_str }}
-                  </div>
-
-                  <div class="divider divider-subtle"></div>
-
-                  {% unless badge_visibility_str contains "no_badges" %}
-                    <div class="badge-row">
-                      {% if badge_visibility_str contains "platform" %}
-                        <div class="badge-on">PLAT {{ est.platform }}</div>
-                      {% endif %}
-
-                      {% if badge_visibility_str contains "bike" %}
-                        {% if est.bikeflag == "1" %}
-                          <div class="badge-on">BIKE</div>
-                        {% else %}
-                          <span class="label label--small label--inverted text--gray-40">BIKE</span>
-                        {% endif %}
-                      {% endif %}
-
-                      {% assign delay_num = est.delay | plus: 0 %}
-                      {% if est.canceled == "1" %}
-                        {% if badge_visibility_str contains "cancel" %}
-                          <div class="badge-on">CANCEL</div>
-                        {% endif %}
-                      {% elsif badge_visibility_str contains "delay" %}
-                        {% if delay_num > 0 %}
-                          <div class="badge-on">DELAY</div>
-                        {% else %}
-                          <span class="label label--small label--inverted text--gray-40">DELAY</span>
-                        {% endif %}
-                      {% endif %}
+              {% if est_minutes == minute %}
+                <div class="item bg--black card">
+                  <div class="content layout--col gap--small">
+                    <div class="value value--small text--gray-60" style="letter-spacing: 0.3px; font-weight: bold;">
+                      {{ etd.abbreviation }}
                     </div>
-                  {% endunless %}
+
+                    <div class="value value--small text--white time-display" style="font-size: 1.9em; font-weight: bold;">
+                      {% if est.minutes == 'Leaving' or est.minutes == '0' %}
+                        {% assign arrival_seconds = 0 %}
+                      {% else %}
+                        {% assign arrival_seconds = est.minutes | times: 60 %}
+                      {% endif %}
+                      {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
+                      {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
+                      {{ arrival_time_str }}
+                    </div>
+
+                    <div class="divider divider-subtle"></div>
+
+                    {% unless badge_visibility_str contains "no_badges" %}
+                      <div class="badge-row">
+                        {% if badge_visibility_str contains "platform" %}
+                          <div class="badge-on">PLAT {{ est.platform }}</div>
+                        {% endif %}
+
+                        {% if badge_visibility_str contains "bike" %}
+                          {% if est.bikeflag == "1" %}
+                            <div class="badge-on">BIKE</div>
+                          {% else %}
+                            <span class="label label--small label--inverted text--gray-40">BIKE</span>
+                          {% endif %}
+                        {% endif %}
+
+                        {% assign delay_num = est.delay | plus: 0 %}
+                        {% if est.canceled == "1" %}
+                          {% if badge_visibility_str contains "cancel" %}
+                            <div class="badge-on">CANCEL</div>
+                          {% endif %}
+                        {% elsif badge_visibility_str contains "delay" %}
+                          {% if delay_num > 0 %}
+                            <div class="badge-on">DELAY</div>
+                          {% else %}
+                            <span class="label label--small label--inverted text--gray-40">DELAY</span>
+                          {% endif %}
+                        {% endif %}
+                      </div>
+                    {% endunless %}
+                  </div>
                 </div>
-              </div>
-              {% assign train_count = train_count | plus: 1 %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
+                {% assign train_count = train_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
       {% endfor %}
     {% endif %}
 
