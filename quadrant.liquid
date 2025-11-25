@@ -122,13 +122,13 @@
               {% for est in etd.estimate limit:4 %}
                 <div class="time-badge">
                   {% if est.minutes == 'Leaving' or est.minutes == '0' %}
-                    Now
+                    {% assign arrival_seconds = 0 %}
                   {% else %}
                     {% assign arrival_seconds = est.minutes | times: 60 %}
-                    {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
-                    {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
-                    {{ arrival_time_str }}
                   {% endif %}
+                  {% assign arrival_timestamp = now_pst | plus: arrival_seconds %}
+                  {% assign arrival_time_str = arrival_timestamp | date: "%-I:%M %p" %}
+                  {{ arrival_time_str }}
                 </div>
               {% endfor %}
             </div>
