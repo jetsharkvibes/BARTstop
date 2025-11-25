@@ -31,10 +31,37 @@
 {% else %}
   {% assign bart_train_lines_str = "" %}
 {% endif %}
+
+{% comment %} Count total available unique train lines for smart filter display {% endcomment %}
+{% assign total_available_lines = "" %}
+{% if station.etd %}
+  {% for etd in station.etd %}
+    {% assign line_abbr = etd.abbreviation %}
+    {% unless total_available_lines contains line_abbr %}
+      {% assign total_available_lines = total_available_lines | append: line_abbr | append: "," %}
+    {% endunless %}
+  {% endfor %}
+{% endif %}
+
 <div class="title_bar">
   <img class="image" src="/images/plugins/trmnl--render.svg">
   <span class="title">{{ station.name }} BART</span>
-  <span class="instance">{% assign direction = trmnl.plugin_settings.custom_fields_values.bart_direction %}{% if direction == 'n' or direction == 'N' %}North{% elsif direction == 's' or direction == 'S' %}South{% else %}{{ direction | capitalize }}{% endif %}</span>
+  <span class="instance">
+    {% assign direction = trmnl.plugin_settings.custom_fields_values.bart_direction %}
+    {% assign total_lines_array = total_available_lines | split: ',' %}
+    {% assign filter_lines_array = bart_train_lines_str | split: ',' %}
+    {% assign has_line_filter = false %}
+    {% if bart_train_lines_str and bart_train_lines_str != '' and filter_lines_array.size < total_lines_array.size %}
+      {% assign has_line_filter = true %}
+    {% endif %}
+
+    {% if direction and direction != "" %}
+      {% if direction == 'n' or direction == 'N' %}North{% elsif direction == 's' or direction == 'S' %}South{% else %}{{ direction | capitalize }}{% endif %}
+    {% endif %}
+    {% if has_line_filter %}
+      {% if direction and direction != "" %} · {% endif %}{{ bart_train_lines_str }}
+    {% endif %}
+  </span>
 </div>
 <div class="layout layout--col gap--small">
   <div class="header">
@@ -219,7 +246,6 @@
 
   <div class="footer">
     <div class="divider divider-footer"></div>
-    <div class="label label--small text--gray-50"></div>
     {% if last_updated %}
       <div class="label label--small text--gray-60">Updated {{ last_updated }}</div>
     {% endif %}

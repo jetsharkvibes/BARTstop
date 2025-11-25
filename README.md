@@ -8,7 +8,8 @@ A TRMNL e-ink display plugin that shows real-time train arrivals at any BART (Ba
 
 - **Real-time arrivals** for any BART station
 - **Train line indicators** showing destination abbreviations (RICH, MLBR, DUBL, etc.)
-- **Direction filtering** (optional) to show only northbound or southbound trains
+- **Smart filtering** - filter by direction and/or specific train lines
+- **Customizable badges** - show platform, bike availability, delays, and cancellations (full and half_vertical layouts)
 - **Multiple layout options** for different TRMNL screen sizes
 - **Zero infrastructure** - no backend server required, calls BART API directly
 - **Store-ready** - optimized with 6 or fewer inline styles per template
@@ -19,25 +20,29 @@ A TRMNL e-ink display plugin that shows real-time train arrivals at any BART (Ba
 
 Choose from 4 responsive layouts:
 
-### Full (3-column grid)
-Best for: Full-screen displays showing 3 upcoming trains
-- Large time display (2.6em)
-- Detailed train info including platform and bike availability
+### Full (4-column grid)
+Best for: Full-screen displays showing up to 12 trains
+- Large time display (1.9em)
+- Detailed train info with customizable badges (platform, bike, delay, cancel)
+- Shows first train for each unique line, then fills remaining slots
 
-### Half Horizontal (4-column grid)
-Best for: Horizontal half-screen displays showing 4 upcoming trains
-- Compact design with abbreviated labels
-- Efficient use of horizontal space
+### Half Horizontal (2x2 grid)
+Best for: Horizontal half-screen displays showing up to 4 trains
+- Compact horizontal layout with destination and times
+- Sans-serif time display for clarity
+- Smart filter display in titlebar
 
-### Half Vertical (Vertical stack)
-Best for: Vertical half-screen displays showing 4 upcoming trains
-- Tight vertical spacing
+### Half Vertical (2-column grid)
+Best for: Vertical half-screen displays showing up to 6 trains
+- Vertical stack with customizable badges
 - Optimized for tall, narrow displays
+- Same badge options as Full layout
 
-### Quadrant (2-column grid)
-Best for: Quarter-screen displays showing 2 upcoming trains
-- Medium time display (1.9em)
-- Balanced information density
+### Quadrant (vertical stack)
+Best for: Quarter-screen displays showing 2 trains
+- Clean horizontal card layout (destination left, times right)
+- Sans-serif time display
+- Maximum 2 train cards to fit small space
 
 ## Setup
 
@@ -57,8 +62,23 @@ Best for: Quarter-screen displays showing 2 upcoming trains
 
 **Direction** (optional)
 - Leave blank for all trains
-- Select `n` for northbound trains only
-- Select `s` for southbound trains only
+- Select **North** for northbound trains only
+- Select **South** for southbound trains only
+- Filters appear in titlebar when active
+
+**Train Line Filter** (optional, multi-select)
+- Default: **No filters** (shows all train lines)
+- Select specific lines to show only those trains (RICH, MLBR, DUBL, etc.)
+- Filters display in titlebar only when actively filtering trains
+- Combine with Direction filter for precise control
+
+**Badge Visibility** (optional, multi-select, full and half_vertical layouts only)
+- Default: **All badges enabled** (platform, bike, delay, cancel)
+- **Platform**: Shows platform number (e.g., "PLAT 1")
+- **Bike**: Shows if train allows bikes (highlighted when available)
+- **Delay**: Shows if train is delayed (highlighted when delayed)
+- **Cancel**: Shows if train is cancelled (highlighted when cancelled)
+- Select **No badges** to hide all badges
 
 ### 3. Refresh Interval
 
@@ -66,9 +86,20 @@ Default: 30 seconds (recommended)
 - BART API updates every 20-30 seconds
 - Faster refresh = more current data, but more API calls
 
-## Train Line Abbreviations
+## Filtering & Display
 
-The plugin shows abbreviated train destinations:
+### Smart Filter Display
+Filters only appear in the titlebar instance when they're actively filtering trains:
+- **Direction only**: Shows "North" or "South"
+- **Lines only**: Shows line abbreviations (e.g., "RICH,MLBR")
+- **Both**: Shows both separated by · (e.g., "North · RICH,MLBR")
+- **No filters/All trains shown**: Shows only direction (or nothing if no direction set)
+
+This smart display ensures you always know when filters are active without cluttering the interface.
+
+## Available Train Lines
+
+Select from these train lines in the filter (or choose "No filters" to show all):
 
 | Abbreviation | Destination |
 |--------------|-------------|
@@ -82,6 +113,19 @@ The plugin shows abbreviated train destinations:
 | PITT | Pittsburg/Bay Point |
 | SFIA | SFO International Airport |
 | OAKL | Oakland Airport |
+
+## Available Badges
+
+For **full** and **half_vertical** layouts, choose which information badges to display:
+
+| Badge | Description | When Highlighted |
+|-------|-------------|------------------|
+| **Platform** | Shows platform number | Always shown (e.g., "PLAT 1") |
+| **Bike** | Bike availability | When bikes are allowed on train |
+| **Delay** | Train delay status | When train is delayed |
+| **Cancel** | Cancellation status | When train is cancelled |
+
+**Note**: Badges are not available on quadrant and half_horizontal layouts due to space constraints.
 
 ## Technical Details
 
@@ -127,6 +171,16 @@ For issues or feature requests, please open an issue on GitHub:
 https://github.com/jetsharkvibes/BARTstop/issues
 
 ## Version History
+
+### v1.1.0 (2025-01-23)
+- Added smart train line filtering (filter by specific lines)
+- Added customizable badge visibility (platform, bike, delay, cancel)
+- Moved filters to titlebar instance for cleaner display
+- Updated quadrant and half_horizontal layouts to horizontal card design
+- Changed half_horizontal to 2x2 grid layout
+- Unified time fonts to sans-serif across layouts
+- Smart filter display (only shows when actively filtering)
+- Improved direction field (North/South instead of n/s)
 
 ### v1.0.0 (2025-01-18)
 - Initial release
